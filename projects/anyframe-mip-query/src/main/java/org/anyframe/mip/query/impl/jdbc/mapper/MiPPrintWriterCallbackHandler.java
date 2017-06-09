@@ -26,116 +26,112 @@ import org.anyframe.query.QueryInfo;
 import org.anyframe.query.ria.RiaPrintWriterCallback;
 
 /**
- * Class for Print Writer Mip Dataset 
+ * Class for Print Writer Mip Dataset
  * 
  * @author Soyon Lim
  * @author JongHoon Kim
  */
-public class MiPPrintWriterCallbackHandler extends
-        MiPCallbackSupport implements RiaPrintWriterCallback {
+public class MiPPrintWriterCallbackHandler extends MiPCallbackSupport implements
+		RiaPrintWriterCallback {
 
-	private String encoding = "utf-8";
+	private String encoding = "utf-8"; 
 	private PrintWriter writer;
 	private int rowCount;
 	private int columnCount;
-	private int[] columnTypes;
-	private String[] fieldNames;
 	private String[] columnNames;
-	@SuppressWarnings("unchecked")
-	private Map columnIndexMap = new HashMap();
+	private final Map<String, Integer> columnIndexMap = new HashMap<String, Integer>();
 
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}
-	
-	public String getEncoding(){
+
+	public String getEncoding() {
 		return this.encoding;
-		
+
 	}
 
-	public void setPrintWriter(PrintWriter writer){
-        this.writer = writer;
+	public void setPrintWriter(PrintWriter writer) {
+		this.writer = writer;
 	}
-	
-	//Default Constructor
-	 public MiPPrintWriterCallbackHandler() {
-	 
-	 }
-	 
-    public MiPPrintWriterCallbackHandler(PrintWriter writer, QueryInfo queryInfo) {
-        this.writer = writer;
-        this.queryInfo = queryInfo;
-    }
 
-    protected short getDsType(int rsType) throws SQLException {
-        return 0;
-    }
+	// Default Constructor
+	public MiPPrintWriterCallbackHandler() {
 
-    @SuppressWarnings("unchecked")
+	}
+
+	public MiPPrintWriterCallbackHandler(PrintWriter writer, QueryInfo queryInfo) {
+		this.writer = writer;
+		this.queryInfo = queryInfo;
+	}
+
+	protected short getDsType(int rsType) {
+		return 0;
+	}
+
 	public void processRow(ResultSet rs) throws SQLException {
-    	StringBuilder printString = null;
-        if (rowCount == 0) {
-            ResultSetMetaData rsmd = rs.getMetaData();
-            columnCount = rsmd.getColumnCount();
-            columnTypes = new int[rsmd.getColumnCount()];
-            fieldNames = new String[rsmd.getColumnCount()];
-            columnNames = new String[rsmd.getColumnCount()];
-            printString = new StringBuilder();
-            for (int i = 0; i < columnCount; i++) {
-                String fieldName = getMappingStylekey(queryInfo, rsmd.getColumnLabel(i + 1));
-                columnTypes[i] = rsmd.getColumnType(i + 1);
-                fieldNames[i] = fieldName;
-                columnIndexMap.put(columnNames[i], new Integer(i + 1));
-                printString.append(fieldName.toUpperCase() + ":STRING(100)");
-                if (i != columnCount - 1)
-                    printString.append(",");
-            }
+		StringBuilder printString = null;
+		if (rowCount == 0) {
+			ResultSetMetaData rsmd = rs.getMetaData();
+			columnCount = rsmd.getColumnCount();
+			int[] columnTypes = new int[rsmd.getColumnCount()];
+			String[] fieldNames = new String[rsmd.getColumnCount()];
+			columnNames = new String[rsmd.getColumnCount()];
+			printString = new StringBuilder();
+			for (int i = 0; i < columnCount; i++) {
+				String fieldName = getMappingStylekey(queryInfo, rsmd
+						.getColumnLabel(i + 1));
+				columnTypes[i] = rsmd.getColumnType(i + 1);
+				fieldNames[i] = fieldName;
+				columnIndexMap.put(columnNames[i], new Integer(i + 1));
+				printString.append(fieldName.toUpperCase() + ":STRING(100)");
+				if (i != columnCount - 1)
+					printString.append(",");
+			}
 
-            printString.append("\n");
-            writer.write(printString.toString());
-        }
-        printString = new StringBuilder();
-        for (int i = 1; i <= columnCount; i++) {
-            printString.append(replaceChar((String) getValues(rs, i, 12)));
-            if (i != columnCount)
-                printString.append(",");
-        }
+			printString.append("\n");
+			writer.write(printString.toString());
+		}
+		printString = new StringBuilder();
+		for (int i = 1; i <= columnCount; i++) {
+			printString.append(replaceChar((String) getValues(rs, i, 12)));
+			if (i != columnCount)
+				printString.append(",");
+		}
 
-        printString.append("\n");
-        writer.write(printString.toString());
-        rowCount++;
-    }
+		printString.append("\n");
+		writer.write(printString.toString());
+		rowCount++;
+	}
 
-    static final String replaceChar(String srcStr) {
-        String tempStr = srcStr;
-        tempStr = replaceChars(tempStr, "\\", "\\\\");
-        tempStr = replaceChars(tempStr, "\"", "\\\"");
-        tempStr = replaceChars(tempStr, "\n", "\\n");
-        if (tempStr.indexOf(",") != -1 || tempStr.indexOf("'") != -1)
-            tempStr = "\"" + tempStr + "\"";
-        return tempStr;
-    }
+	static final String replaceChar(String srcStr) {
+		String tempStr = srcStr;
+		tempStr = replaceChars(tempStr, "\\", "\\\\");
+		tempStr = replaceChars(tempStr, "\"", "\\\"");
+		tempStr = replaceChars(tempStr, "\n", "\\n");
+		if (tempStr.indexOf(",") != -1 || tempStr.indexOf("'") != -1)
+			tempStr = "\"" + tempStr + "\"";
+		return tempStr;
+	}
 
-    static final String replaceChars(String para, String chars1, String chars2) {
-        String temp = "";
-        if (para == null)
-            para = "";
-        int start = 0;
-        int index = 0;
-        for (; index != -1; start = index + chars1.length()) {
-            index = para.indexOf(chars1, start);
-            if (index == -1) {
-                temp = temp + para.substring(start, para.length());
-                break;
-            }
-            temp = temp + para.substring(start, index);
-            temp = temp + chars2;
-        }
+	static final String replaceChars(String para, String chars1, String chars2) {
+		String temp = "";
+		if (para == null)
+			para = "";
+		int start = 0;
+		int index = 0;
+		for (; index != -1; start = index + chars1.length()) {
+			index = para.indexOf(chars1, start);
+			if (index == -1) {
+				temp = temp + para.substring(start, para.length());
+				break;
+			}
+			temp = temp + para.substring(start, index);
+			temp = temp + chars2;
+		}
 
-        if (start == 0)
-            return para;
-        else
-            return temp;
-    }
-
+		if (start == 0)
+			return para;
+		else
+			return temp;
+	}
 }

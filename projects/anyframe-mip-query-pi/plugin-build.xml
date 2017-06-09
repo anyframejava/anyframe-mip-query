@@ -2,26 +2,30 @@
 <plugin name="mip-query" description="Mip-Query Plugin consists of sample code that provides basic guidelines on how to use MiPlatform connection modules and common server modules provided by Anyframe, and reference libraries needed to use open sources.">
 	<groupId>org.anyframe.plugin</groupId>
 	<artifactId>anyframe-mip-query-pi</artifactId>
-	<version>1.0.5</version>
+	<version>1.5.0</version>
 	<dependent-plugins>
-		<dependent-plugin name="query-ria" version="2.0.0&gt;*" />
+		<dependent-plugin name="query-ria" version="2.0.0&gt;*&gt;1.4.0" />
 	</dependent-plugins>
 	<resources>
 		<resource dir="src/main/java" filtered="true" packaged="true">
 			<include name="**/mip/query/**/*.java" />
+			<exclude name="**/common/aspect/LoggingAspect.java" merged="true"/>
 		</resource>
 		<resource dir="src/main/resources" filtered="true" packaged="false">
-			<include name="**/*.xml" />
-			<exclude name="**/spring/context-transaction.xml" />
+			<exclude name="**/spring/context-transaction.xml" merged="true"/>
+			<include name="**/*mip-query*.xml" />
+			<include name="**/mip-query/**/*.xml" />
+			<include name="**/mip-generation-servlet.xml"/>
 		</resource>
 		<resource dir="src/test/java" filtered="true" packaged="true">
-			<include name="**/*.java" />
+			<include name="**/mip/query/**/*.java" />
 		</resource>
 		<resource dir="src/test/resources" filtered="true" packaged="false">
-			<include name="**/*.xml" />
+			<include name="**/*mip-query*.xml" />
 		</resource>
-		<resource dir="src/main/webapp/mip-query" filtered="false"
-			packaged="false">
+		<resource dir="src/main/webapp" filtered="false" packaged="false">
+			<include name="**/mip-query/**/*.*" />
+			<exclude name="**/anyframe.jsp" merged="true"/>
 			<exclude name="**/mip_query_mdi.xml" />
 			<exclude name="**/mip_query_sdi.xml" />
 		</resource>
@@ -29,57 +33,15 @@
 			packaged="false">
 			<include name="**/mip_query_mdi.xml" />
 			<include name="**/mip_query_sdi.xml" />
-		</resource>
-		<resource dir="src/main/webapp/mip-query/basic/javascript" filtered="true"
-			packaged="false">
-			<include name="**/fileupdown.js" />
+			<include name="**/basic/javascript/**/fileupdown.js" />
 		</resource>
 		<resource dir="db" filtered="false" packaged="false">
-			<include name="**/*.sql" />
+			<include name="**/scripts/*.sql" />
 		</resource>
+		<resource dir="db" filtered="false" packaged="false">
+			<include name="**/resources/**/*.xml" />
+		</resource>	
 	</resources>
-	<build>
-		<filesets>
-			<fileset dir="src/main/java" filtered="true" packaged="true">
-				<include name="**/mip/query/**/*.java" />
-				<include name="org/anyframe/plugin/common/aspect/LoggingAspect.java" />
-			</fileset>
-			<fileset dir="src/main/resources" filtered="true" packaged="false">
-				<include name="**/spring/context-transaction.xml" />
-				<include name="**/*mip-query*.xml" />
-				<include name="**/mip-query/**/*.xml" />
-				<include name="**/mip-generation-servlet.xml"/>
-				<include name="**/context.properties" />
-			</fileset>
-			<fileset dir="src/test/java" filtered="true" packaged="true">
-				<include name="**/org/anyframe/plugin/mip/query/**/*.java" />
-			</fileset>
-			<fileset dir="src/test/resources" filtered="true" packaged="false">
-				<include name="**/*mip-query*.xml" />
-			</fileset>
-			<fileset dir="src/main/webapp" filtered="false" packaged="false">
-				<include name="**/mip-query/**/*.*" />
-				<include name="**/anyframe.jsp" />
-				<exclude name="**/mip_query_mdi.xml" />
-				<exclude name="**/mip_query_sdi.xml" />
-			</fileset>
-			<fileset dir="src/main/webapp/mip-query" filtered="true"
-				packaged="false">
-				<include name="**/mip_query_mdi.xml" />
-				<include name="**/mip_query_sdi.xml" />
-			</fileset>
-			<fileset dir="src/main/webapp/mip-query/basic/javascript" filtered="true"
-				packaged="false">
-				<include name="**/fileupdown.js" />
-			</fileset>
-			<fileset dir="db" filtered="false" packaged="false">
-				<include name="**/scripts/*.sql" />
-			</fileset>
-			<fileset dir="db" filtered="false" packaged="false">
-				<include name="**/resources/**/*.xml" />
-			</fileset>			
-		</filesets>
-	</build>
 	<samples>true</samples>
 	<interceptor>
 		<class>org.anyframe.plugin.interceptor.MipQueryPluginInterceptor</class>
@@ -87,7 +49,7 @@
 			<dependency>
 				<groupId>org.anyframe</groupId>
 				<artifactId>anyframe-ide-command-common</artifactId>
-				<version>2.2.0</version>
+				<version>2.2.1</version>
 				<scope>interceptor</scope>
 			</dependency>
 			<dependency>

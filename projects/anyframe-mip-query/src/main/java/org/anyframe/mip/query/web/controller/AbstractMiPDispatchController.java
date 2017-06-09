@@ -18,10 +18,9 @@ package org.anyframe.mip.query.web.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
-
-import org.anyframe.exception.BaseException;
 
 import com.tobesoft.platform.PlatformRequest;
 import com.tobesoft.platform.data.DatasetList;
@@ -34,23 +33,20 @@ public class AbstractMiPDispatchController extends AbstractMiPController {
 	 * method name. This collection is populated as different methods are
 	 * called, so that introspection needs to occur only once per method name.
 	 */
-	@SuppressWarnings("unchecked")
-	protected HashMap methods = new HashMap();
+	protected Map<String, Method> methods = new HashMap<String, Method>();
 
 	/**
 	 * The Class instance of this <code>AnyframeMiPDispatchConroller</code>
 	 * class.
 	 */
-	@SuppressWarnings("unchecked")
-	protected Class clazz = this.getClass();
+	protected Class<?> clazz = this.getClass();
 
 	/**
 	 * The set of Method objects we have introspected for this class, keyed by
 	 * method name. This collection is populated as different methods are
 	 * called, so that introspection needs to occur only once per method name.
 	 */
-	@SuppressWarnings("unchecked")
-	protected Class[] types = { PlatformRequest.class, VariableList.class,
+	protected Class<?>[] types = { PlatformRequest.class, VariableList.class,
 			DatasetList.class, VariableList.class, DatasetList.class };
 
 	/**
@@ -88,10 +84,8 @@ public class AbstractMiPDispatchController extends AbstractMiPController {
 			}
 			dispatchMethod(platformRequest, name, inVl, inDl, outVl, outDl);
 		} catch (Exception e) {
-			logger.error("Can not excute dispatch method.");
-			if (e instanceof BaseException)
-				throw (BaseException) e;
-			throw new Exception(e.getMessage());
+			logger.error("Can not excute dispatch method." , e.getCause());
+			throw new Exception("Fail to process client request.", e.getCause());
 		}
 	}
 
@@ -162,7 +156,6 @@ public class AbstractMiPDispatchController extends AbstractMiPController {
 	 *            Name of the method to be introspected
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	protected Method getMethod(String name) throws Exception {
 		synchronized (methods) {
 			try {

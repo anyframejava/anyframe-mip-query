@@ -27,29 +27,14 @@ import com.tobesoft.platform.data.VariableList;
  */
 public class MiPVariantSqlParameterSource extends DefaultDynamicSqlParameterSource {
 
-    private VariableList variant;
+    private final VariableList variant;
 
-    public MiPVariantSqlParameterSource(VariableList variant) {
+    public MiPVariantSqlParameterSource(VariableList variant) { 
         this.variant = variant;
     }
 
     public Object getValue(String arg0) {
-        Object value = variant.getValueAsObject(arg0);
-        // if (value == null) {
-        // value = VariableUtil.getValueString(arg0,
-        // new VariableSelector() {
-        //
-        // public boolean containsKey(String arg0) {
-        // return hasValue(arg0);
-        // }
-        //
-        // public String get(String arg0) {
-        // return
-        // variant.getValueAsObject(arg0).toString();
-        // }
-        // });
-        // }
-        return value;
+        return variant.getValueAsObject(arg0);
     }
 
     public boolean hasValue(String arg0) {
@@ -57,7 +42,7 @@ public class MiPVariantSqlParameterSource extends DefaultDynamicSqlParameterSour
     }
 
     public String getTypeName(String arg0) {
-        // TODO Auto-generated method stub
+		// TODO Auto-generated method stub
         return arg0;
     }
 

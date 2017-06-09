@@ -8,8 +8,8 @@
 		<para>
 			One view consists of one form, and the form ID is “frm”+.
 		</para>
-		<table>
-			<title>e.g.)</title>
+		<informaltable>
+			<caption>Naming Rule of file</caption>
 			<tgroup cols="2">
 				<colspec colnum="1" colname="col1" colwidth="4*" />
 				<colspec colnum="2" colname="col2" colwidth="6*" />
@@ -30,7 +30,7 @@
 					</row>																												
 				</tbody>
 			</tgroup>
-		</table>
+		</informaltable>
 		<para>
 			In PID, form ID should be defined as the form property.
 		</para>
@@ -82,7 +82,8 @@
 		<para>
 			The prefix of each UI component are as follows.
 		</para>
-		<table>
+		<informaltable>
+			<caption>UI Component Prefix</caption>
 			<tgroup cols="3">
 				<colspec colnum="1" colname="col1" colwidth="3*" />
 				<colspec colnum="2" colname="col2" colwidth="3*" />
@@ -232,7 +233,7 @@
 					</row>																										
 				</tbody>
 			</tgroup>
-		</table>
+		</informaltable>
 	</section>
 	
 	<section id="mip_query_mipuisample_standards_variable">
@@ -309,7 +310,8 @@
 				Variables used for the form script of each view are named with the Prefix according to data type and the English abbreviation of the UI meaning. 
 				Words are separated by capitalizing the first letter of each word.
 			</para>
-			<table>
+			<informaltable>
+				<caption>Variable Prefix</caption>
 				<tgroup cols="3">
 					<colspec colnum="1" colname="col1" colwidth="3*" />
 					<colspec colnum="2" colname="col2" colwidth="3*" />
@@ -354,7 +356,7 @@
 						</row>																													
 					</tbody>
 				</tgroup>
-			</table>
+			</informaltable>
 		</section>
 	</section>
 	

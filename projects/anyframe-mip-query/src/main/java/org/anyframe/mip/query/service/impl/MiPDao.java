@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.anyframe.mip.query.MiPActionCommand;
 import org.anyframe.mip.query.MiPQueryService;
-import org.anyframe.mip.query.service.impl.MiPDao;
+import org.anyframe.query.exception.QueryException;
 
 import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.DatasetList;
@@ -35,11 +35,11 @@ import com.tobesoft.platform.data.VariableList;
 public class MiPDao {
 
 	public final short TYPE_NORMAL = 1;
-	public final short TYPE_INSERT = 2;
+	public final short TYPE_INSERT = 2; 
 	public final short TYPE_UPDATE = 4;
 	public final short TYPE_DELETE = 8;
 
-	private MiPQueryService miPQueryService;
+	private final MiPQueryService miPQueryService;
 
 	public MiPDao(MiPQueryService miPQueryService) {
 		this.miPQueryService = miPQueryService;
@@ -52,10 +52,10 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param primaryKey
 	 *            privary key value
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public Dataset get(String queryId, String primaryKey) throws Exception {
+	public Dataset get(String queryId, String primaryKey) throws QueryException {
 		VariableList inVl = new VariableList();
 		inVl.add("primaryKey", primaryKey);
 		return miPQueryService.search(queryId, inVl);
@@ -68,10 +68,10 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inVl
 	 *            VariableList contains key word to search.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public Dataset get(String queryId, VariableList inVl) throws Exception {
+	public Dataset get(String queryId, VariableList inVl) throws QueryException {
 		return miPQueryService.search(queryId, inVl);
 	}
 
@@ -82,10 +82,10 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inDs
 	 *            Dataset contains key word to search.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public Dataset getList(String queryId, Dataset inDs) throws Exception {
+	public Dataset getList(String queryId, Dataset inDs) throws QueryException {
 		return miPQueryService.search(queryId, inDs);
 	}
 
@@ -96,10 +96,11 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inVl
 	 *            VariableList contains key word to search.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public Dataset getList(String queryId, VariableList inVl) throws Exception {
+	public Dataset getList(String queryId, VariableList inVl)
+			throws QueryException {
 		return miPQueryService.search(queryId, inVl);
 	}
 
@@ -110,10 +111,11 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inDs
 	 *            Dataset contains key word to search and pageIndex, pageUnit.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public Dataset getPagingList(String queryId, Dataset inDs) throws Exception {
+	public Dataset getPagingList(String queryId, Dataset inDs)
+			throws QueryException {
 		return miPQueryService.searchWithPaging(queryId, inDs);
 	}
 
@@ -124,10 +126,10 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inVl
 	 *            VariableList contains record to insert.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public int create(String queryId, VariableList inVl) throws Exception {
+	public int create(String queryId, VariableList inVl) throws QueryException {
 		return miPQueryService.update(queryId, inVl);
 	}
 
@@ -138,10 +140,10 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inDs
 	 *            Dataset contains records to insert.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public int create(String queryId, Dataset inDs) throws Exception {
+	public int create(String queryId, Dataset inDs) throws QueryException {
 		return create(queryId, inDs, null);
 	}
 
@@ -154,12 +156,12 @@ public class MiPDao {
 	 *            Dataset contains records to insert.
 	 * @param actionCommand
 	 *            IMiPActionCommand contains biz. logic pre or post insert.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	@SuppressWarnings("unchecked")
-	public int create(String queryId, Dataset inDs, MiPActionCommand actionCommand) throws Exception {
-		Map queryMap = new HashMap();
+	public int create(String queryId, Dataset inDs,
+			MiPActionCommand actionCommand) throws QueryException {
+		Map<String, String> queryMap = new HashMap<String, String>();
 		setDatasetStatus(TYPE_INSERT, inDs);
 		queryMap.put(MiPQueryService.QUERY_INSERT, queryId);
 		return saveAll(queryMap, inDs, actionCommand);
@@ -172,10 +174,10 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inVl
 	 *            VariableList contains record to remove.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public int remove(String queryId, VariableList inVl) throws Exception {
+	public int remove(String queryId, VariableList inVl) throws QueryException {
 		return miPQueryService.update(queryId, inVl);
 	}
 
@@ -186,10 +188,10 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inDs
 	 *            Dataset contains records to remove.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public int remove(String queryId, Dataset inDs) throws Exception {
+	public int remove(String queryId, Dataset inDs) throws QueryException {
 		return remove(queryId, inDs, null);
 	}
 
@@ -202,12 +204,12 @@ public class MiPDao {
 	 *            Dataset contains records to remove.
 	 * @param actionCommand
 	 *            IMiPActionCommand contains biz. logic pre or post remove.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	@SuppressWarnings("unchecked")
-	public int remove(String queryId, Dataset inDs, MiPActionCommand actionCommand) throws Exception {
-		Map queryMap = new HashMap();
+	public int remove(String queryId, Dataset inDs,
+			MiPActionCommand actionCommand) throws QueryException {
+		Map<String, String> queryMap = new HashMap<String, String>();
 		setDatasetStatus(TYPE_DELETE, inDs);
 		queryMap.put(MiPQueryService.QUERY_DELETE, queryId);
 		return saveAll(queryMap, inDs, actionCommand);
@@ -220,10 +222,10 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inVl
 	 *            VariableList contains record to update.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public int update(String queryId, VariableList inVl) throws Exception {
+	public int update(String queryId, VariableList inVl) throws QueryException {
 		return miPQueryService.update(queryId, inVl);
 	}
 
@@ -234,10 +236,10 @@ public class MiPDao {
 	 *            query id to execute in query mapping file.
 	 * @param inDs
 	 *            Dataset contains records to update.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	public int update(String queryId, Dataset inDs) throws Exception {
+	public int update(String queryId, Dataset inDs) throws QueryException {
 		return update(queryId, inDs, null);
 	}
 
@@ -250,12 +252,12 @@ public class MiPDao {
 	 *            Dataset contains records to update.
 	 * @param actionCommand
 	 *            IMiPActionCommand contains biz. logic pre or post update.
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	@SuppressWarnings("unchecked")
-	public int update(String queryId, Dataset inDs, MiPActionCommand actionCommand) throws Exception {
-		Map queryMap = new HashMap();
+	public int update(String queryId, Dataset inDs,
+			MiPActionCommand actionCommand) throws QueryException {
+		Map<String, String> queryMap = new HashMap<String, String>();
 		setDatasetStatus(TYPE_UPDATE, inDs);
 		queryMap.put(MiPQueryService.QUERY_UPDATE, queryId);
 		return saveAll(queryMap, inDs, actionCommand);
@@ -270,10 +272,10 @@ public class MiPDao {
 	 * @param inDs
 	 *            Dataset contains records to insert, update, delete.
 	 * @return
-	 * @throws Exception
+	 * @throws QueryException
 	 */
-	@SuppressWarnings("unchecked")
-	public int saveAll(Map queryMap, Dataset inDs) throws Exception {
+	public int saveAll(Map<String, String> queryMap, Dataset inDs)
+			throws QueryException {
 		return saveAll(queryMap, inDs, null);
 	}
 
@@ -289,10 +291,10 @@ public class MiPDao {
 	 *            IMiPActionCommand contains biz. logic pre or post insert,
 	 *            update, delete.
 	 * @return
-	 * @throws Exception
+	 * @throws QueryException
 	 */
-	@SuppressWarnings("unchecked")
-	public int saveAll(Map queryMap, Dataset inDs, MiPActionCommand actionCommand) throws Exception {
+	public int saveAll(Map<String, String> queryMap, Dataset inDs,
+			MiPActionCommand actionCommand) throws QueryException {
 		if (actionCommand == null) {
 			return miPQueryService.update(queryMap, inDs);
 		} else {
@@ -312,13 +314,19 @@ public class MiPDao {
 	 *            IMiPActionCommand contains biz. logic pre or post insert,
 	 *            update, delete.
 	 * @return
-	 * @throws Exception
+	 * @throws QueryException
 	 */
-	public DatasetList execute(String queryId, Dataset inDs) throws Exception {
+	public DatasetList execute(String queryId, Dataset inDs)
+			throws QueryException {
 		return miPQueryService.execute(queryId, inDs);
 	}
+	
+	public DatasetList execute(String queryId) throws QueryException{
+		return miPQueryService.execute(queryId);
+	}
 
-	private void setDatasetStatus(short type, Dataset dataset) throws Exception {
+	private void setDatasetStatus(short type, Dataset dataset)
+			throws QueryException {
 		int rowCount = dataset.getRowCount();
 
 		dataset.setUpdate(true);

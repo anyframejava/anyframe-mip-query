@@ -29,7 +29,7 @@ import org.anyframe.mip.query.impl.jdbc.setter.MiPDataSetSQLParameterSource;
 import org.anyframe.mip.query.impl.jdbc.setter.MiPVariantSqlParameterSource;
 import org.anyframe.mip.query.impl.jdbc.setter.MiPDataSetSQLParameterSource.ColumnValueExtractor;
 import org.anyframe.query.QueryInfo;
-import org.anyframe.query.QueryServiceException;
+import org.anyframe.query.exception.QueryException;
 import org.anyframe.query.impl.jdbc.setter.DefaultDynamicSqlParameterSource;
 import org.anyframe.query.ria.AbstractRiaQueryService;
 import org.anyframe.query.ria.RiaCallableStatementCallback;
@@ -64,7 +64,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 	}
 
 	public Dataset search(String queryId, final Dataset dataSet)
-			throws Exception {
+			throws QueryException {
 		this.containesQueryId(queryId);
 		Dataset rtDataSet = new Dataset("Anyframe");
 		ColumnValueExtractor updateColumnValueExtractor = new ColumnValueExtractor() {
@@ -80,8 +80,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 			mipRowCallbackHandler = new MiPDataSetCallbackHandler();
 		}
 
-		QueryInfo queryInfo = (QueryInfo) sqlRepository.getQueryInfos().get(
-				queryId);
+		QueryInfo queryInfo = sqlRepository.getQueryInfos().get(queryId);
 
 		mipRowCallbackHandler.setDataSet(rtDataSet);
 		mipRowCallbackHandler.setQueryInfo(queryInfo);
@@ -93,7 +92,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 	}
 
 	public Dataset search(String queryId, final VariableList variableList)
-			throws Exception {
+			throws QueryException {
 		this.containesQueryId(queryId);
 		Dataset rtDataSet = new Dataset("Anyframe");
 
@@ -103,8 +102,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 			mipRowCallbackHandler = new MiPDataSetCallbackHandler();
 		}
 
-		QueryInfo queryInfo = (QueryInfo) sqlRepository.getQueryInfos().get(
-				queryId);
+		QueryInfo queryInfo = sqlRepository.getQueryInfos().get(queryId);
 
 		mipRowCallbackHandler.setDataSet(rtDataSet);
 		mipRowCallbackHandler.setQueryInfo(queryInfo);
@@ -115,7 +113,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 	}
 
 	public Dataset search(String queryId, final VariableList variableList,
-			int pageIndex, int pageSize) throws Exception {
+			int pageIndex, int pageSize) throws QueryException {
 		this.containesQueryId(queryId);
 		Dataset rtDataSet = new Dataset("Anyframe");
 
@@ -125,8 +123,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 			mipRowCallbackHandler = new MiPDataSetCallbackHandler();
 		}
 
-		QueryInfo queryInfo = (QueryInfo) sqlRepository.getQueryInfos().get(
-				queryId);
+		QueryInfo queryInfo = sqlRepository.getQueryInfos().get(queryId);
 
 		mipRowCallbackHandler.setDataSet(rtDataSet);
 		mipRowCallbackHandler.setQueryInfo(queryInfo);
@@ -138,15 +135,14 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 
 	public void search(String queryId, VariableList variableList,
 			int pageIndex, int pageSize, String dataSetName, PrintWriter writer)
-			throws Exception {
+			throws QueryException {
 		this.containesQueryId(queryId);
 
 		RiaPrintWriterCallback miPPrintWriterRowCallbackHandler = getPrintWriterRowCallbackHandler();
 
 		if (miPPrintWriterRowCallbackHandler == null) {
 			miPPrintWriterRowCallbackHandler = new MiPPrintWriterCallbackHandler(
-					writer, (QueryInfo) sqlRepository.getQueryInfos().get(
-							queryId));
+					writer, sqlRepository.getQueryInfos().get(queryId));
 		}
 
 		String encoding = miPPrintWriterRowCallbackHandler.getEncoding();
@@ -161,7 +157,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 	}
 
 	public Dataset searchWithPaging(String queryId, final Dataset dataSet)
-			throws Exception {
+			throws QueryException {
 		this.containesQueryId(queryId);
 		int pageIndex = 0;
 		int pageSize = 0;
@@ -172,7 +168,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 					.intValue();
 		} catch (Exception e) {
 			if (e instanceof NullPointerException) {
-				throw new QueryServiceException(
+				throw new QueryException(
 						"Query Service : there is no parameter for paging, \"pageIndex\" or \"pageSize\" must be null.");
 			}
 		}
@@ -186,41 +182,38 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 		};
 		this.search(queryId, new MiPDataSetSQLParameterSource(dataSet, 0,
 				updateColumnValueExtractor), new MiPDataSetCallbackHandler(
-				rtDataSet, (QueryInfo) sqlRepository.getQueryInfos().get(
-						queryId)), pageIndex, pageSize);
+				rtDataSet, sqlRepository.getQueryInfos().get(queryId)),
+				pageIndex, pageSize);
 		return rtDataSet;
 	}
 
-	@SuppressWarnings("unchecked")
-	public int update(String queryId, VariableList variableList, Map queryMap,
-			Dataset dataSet) throws QueryServiceException {
+	public int update(String queryId, VariableList variableList,
+			Map<String, String> queryMap, Dataset dataSet)
+			throws QueryException {
 		return update(queryId, variableList, queryMap, dataSet,
 				new DefaultMiPActionCommand());
 	}
 
-	@SuppressWarnings("unchecked")
-	public int update(Map queryMap, Dataset dataSet)
-			throws QueryServiceException {
+	public int update(Map<String, String> queryMap, Dataset dataSet)
+			throws QueryException {
 		return update(queryMap, dataSet, new DefaultMiPActionCommand());
 	}
 
-	@SuppressWarnings("unchecked")
-	public int update(Map queryMap, Dataset dataSet,
-			MiPActionCommand actionCommand) throws QueryServiceException {
+	public int update(Map<String, String> queryMap, Dataset dataSet,
+			MiPActionCommand actionCommand) throws QueryException {
 		return update(new InternalMap(queryMap, actionCommand), dataSet);
 	}
 
 	public int update(String queryId, VariableList variableList)
-			throws QueryServiceException {
+			throws QueryException {
 		this.containesQueryId(queryId);
 		return this.update(queryId, new MiPVariantSqlParameterSource(
 				variableList));
 	}
 
-	@SuppressWarnings("unchecked")
-	public int update(String queryId, VariableList variableList, Map queryMap,
-			Dataset dataSet, MiPActionCommand actionCommand)
-			throws QueryServiceException {
+	public int update(String queryId, VariableList variableList,
+			Map<String, String> queryMap, Dataset dataSet,
+			MiPActionCommand actionCommand) throws QueryException {
 		int updateCount = 0;
 		updateCount += update(queryId, variableList);
 		updateCount += update(new InternalMap(queryMap, actionCommand), dataSet);
@@ -228,7 +221,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 	}
 
 	private int update(InternalMap queryMap, Dataset dataSet)
-			throws QueryServiceException {
+			throws QueryException {
 		int totalUpdateCount = 0;
 		// DataSet에 들어있는 모든 데이터 중 STATUS가 INSERT,
 		// UPDATE인 데이터의 건수
@@ -274,13 +267,12 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 		return totalUpdateCount;
 	}
 
-	public DatasetList execute(String queryId) throws QueryServiceException {
+	public DatasetList execute(String queryId) {
 		Dataset dataset = new Dataset();
 		return execute(queryId, dataset);
 	}
 
-	public DatasetList execute(String queryId, Dataset dataset)
-			throws QueryServiceException {
+	public DatasetList execute(String queryId, Dataset dataset) {
 
 		DatasetList datasetList = new DatasetList();
 		this.containesQueryId(queryId);
@@ -326,10 +318,9 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 
 	private int updateDataSet(InternalMap queryMap, Dataset dataSet,
 			int rowNum, String rowStatus,
-			ColumnValueExtractor columnValueExtractor)
-			throws QueryServiceException {
+			ColumnValueExtractor columnValueExtractor) throws QueryException {
 		int totalUpdateCount = 0;
-		String queryId = (String) queryMap.get(rowStatus);
+		String queryId = queryMap.get(rowStatus);
 
 		// Query Map에 ID가 정의 되어 있지 않을 경우에는 정의된 Query만 실행
 		if (queryId != null) {
@@ -379,19 +370,15 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 		void postExecute(Dataset dataSet, int currentRow);
 	}
 
-	/**
-	 * @author z600
-	 */
-	@SuppressWarnings("unchecked")
-	class InternalMap extends HashMap {
+	class InternalMap extends HashMap<String, String> {
 		private static final long serialVersionUID = 1L;
 		/**
 		 * @uml.property name="actionCommand"
 		 * @uml.associationEnd
 		 */
-		private MiPActionCommand actionCommand = null;
+		private final MiPActionCommand actionCommand;
 
-		InternalMap(Map queries, MiPActionCommand actionCommand) {
+		InternalMap(Map<String, String> queries, MiPActionCommand actionCommand) {
 			super(queries);
 			this.actionCommand = actionCommand;
 		}
@@ -449,18 +436,17 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Map generatePropertiesMap(Object[] values, int[] types,
-			DefaultDynamicSqlParameterSource sqlParameterSource)
-			throws QueryServiceException {
+	protected Map<Object, Object> generatePropertiesMap(Object[] values,
+			int[] types, DefaultDynamicSqlParameterSource sqlParameterSource)
+			throws QueryException {
 
-		Map properties = new HashMap();
+		Map<Object, Object> properties = new HashMap<Object, Object>();
 
 		if (sqlParameterSource instanceof MiPVariantSqlParameterSource) {
 			MiPVariantSqlParameterSource sqlParam = (MiPVariantSqlParameterSource) sqlParameterSource;
 			VariableList vl = sqlParam.getVariableList();
 
-			Iterator iterator = vl.idIterator();
+			Iterator<?> iterator = vl.idIterator();
 
 			while (iterator.hasNext()) {
 				String key = (String) iterator.next();

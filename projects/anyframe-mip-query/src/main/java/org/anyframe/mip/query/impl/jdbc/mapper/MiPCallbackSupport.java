@@ -15,9 +15,9 @@
  */
 package org.anyframe.mip.query.impl.jdbc.mapper;
 
-import java.sql.SQLException;
 import java.sql.Types;
 
+import org.anyframe.exception.NotSupportedColumnTypeException;
 import org.anyframe.query.ria.AbstractCallbackSupport;
 
 import com.tobesoft.platform.data.ColumnInfo;
@@ -29,96 +29,105 @@ import com.tobesoft.platform.data.Dataset;
  * @author Soyon Lim
  * @author JongHoon Kim
  */
-public class MiPCallbackSupport extends AbstractCallbackSupport{
+public class MiPCallbackSupport extends AbstractCallbackSupport {
 
 	protected Dataset dataSet = null;
-	
+
 	public void setDataSet(Dataset dataSet) {
 		this.dataSet = dataSet;
 	}
 
-	protected short getDsType(int rsType) throws SQLException {
-        short type = ColumnInfo.COLTYPE_STRING;
-        switch (rsType) {
-        case Types.ARRAY:
-            throw new SQLException("Query Service : Not supported SQL type.");
-        case Types.BIGINT:
-            type = ColumnInfo.COLTYPE_LONG;
-            break;
-        case Types.BINARY:
-            type = ColumnInfo.COLTYPE_BLOB;
-            break;
-        case Types.BIT:
-            throw new SQLException("Query Service : Not supported SQL type.");
-        case Types.CHAR:
-            type = ColumnInfo.COLTYPE_STRING;
-            break;
-        case Types.CLOB:
-            type = ColumnInfo.COLTYPE_STRING;
-            break;
-        case Types.BLOB:
-            type = ColumnInfo.COLTYPE_BLOB;
-            break;
-        case Types.DATE:
-            type = ColumnInfo.COLTYPE_DATE;
-            break;
-        case Types.DECIMAL:
-            type = ColumnInfo.COLTYPE_DECIMAL;
-            break;
-        case Types.DISTINCT:
-            throw new SQLException("Query Service : Not supported SQL type.");
-        case Types.DOUBLE:
-            type = ColumnInfo.COLTYPE_DECIMAL;
-            break;
-        case Types.FLOAT:
-            type = ColumnInfo.COLTYPE_DECIMAL;
-            break;
-        case Types.INTEGER:
-            type = ColumnInfo.COLTYPE_INT;
-            break;
-        case Types.JAVA_OBJECT:
-            throw new SQLException("Query Service : Not supported SQL type.");
-        case Types.LONGVARBINARY:
-            type = ColumnInfo.COLTYPE_UNKNOWN;
-            break;
-        case Types.LONGVARCHAR:
-            type = ColumnInfo.COLTYPE_STRING;
-            break;
-        case Types.NULL:
-            throw new SQLException("Query Service : Not supported SQL type.");
-        case Types.NUMERIC:
-            type = ColumnInfo.COLTYPE_DECIMAL;
-            break;
-        case Types.OTHER:
-            throw new SQLException("Query Service : Not supported SQL type.");
-        case Types.REAL:
-            throw new SQLException("Query Service : Not supported SQL type.");
-        case Types.REF:
-            throw new SQLException("Query Service : Not supported SQL type.");
-        case Types.SMALLINT:
-            type = ColumnInfo.COLTYPE_INT;
-            break;
-        case Types.STRUCT:
-            throw new SQLException("Query Service : Not supported SQL type.");
-        case Types.TIME:
-            type = ColumnInfo.COLTYPE_UNKNOWN;
-            break;
-        case Types.TIMESTAMP:
-            type = ColumnInfo.COLTYPE_UNKNOWN;
-            break;
-        case Types.TINYINT:
-            type = ColumnInfo.COLTYPE_UNKNOWN;
-            break;
-        case Types.VARBINARY:
-            type = ColumnInfo.COLTYPE_UNKNOWN;
-            break;
-        case Types.VARCHAR:
-            type = ColumnInfo.COLTYPE_STRING;
-            break;
-        default:
-            type = ColumnInfo.COLTYPE_STRING;
-            break;
-        }
-        return type;
-    }
+	protected short getDsType(int rsType) {
+		short type = ColumnInfo.COLTYPE_STRING;
+		switch (rsType) {
+		case Types.ARRAY:
+			throw new NotSupportedColumnTypeException(
+					"Query Service : Not supported SQL type.");
+		case Types.BIGINT:
+			type = ColumnInfo.COLTYPE_LONG;
+			break;
+		case Types.BINARY:
+			type = ColumnInfo.COLTYPE_BLOB;
+			break;
+		case Types.BIT:
+			throw new NotSupportedColumnTypeException(
+					"Query Service : Not supported SQL type.");
+		case Types.CHAR:
+			type = ColumnInfo.COLTYPE_STRING;
+			break;
+		case Types.CLOB:
+			type = ColumnInfo.COLTYPE_STRING;
+			break;
+		case Types.BLOB:
+			type = ColumnInfo.COLTYPE_BLOB;
+			break;
+		case Types.DATE:
+			type = ColumnInfo.COLTYPE_DATE;
+			break;
+		case Types.DECIMAL:
+			type = ColumnInfo.COLTYPE_DECIMAL;
+			break;
+		case Types.DISTINCT:
+			throw new NotSupportedColumnTypeException(
+					"Query Service : Not supported SQL type.");
+		case Types.DOUBLE:
+			type = ColumnInfo.COLTYPE_DECIMAL;
+			break;
+		case Types.FLOAT:
+			type = ColumnInfo.COLTYPE_DECIMAL;
+			break;
+		case Types.INTEGER:
+			type = ColumnInfo.COLTYPE_INT;
+			break;
+		case Types.JAVA_OBJECT:
+			throw new NotSupportedColumnTypeException(
+					"Query Service : Not supported SQL type.");
+		case Types.LONGVARBINARY:
+			type = ColumnInfo.COLTYPE_UNKNOWN;
+			break;
+		case Types.LONGVARCHAR:
+			type = ColumnInfo.COLTYPE_STRING;
+			break;
+		case Types.NULL:
+			throw new NotSupportedColumnTypeException(
+					"Query Service : Not supported SQL type.");
+		case Types.NUMERIC:
+			type = ColumnInfo.COLTYPE_DECIMAL;
+			break;
+		case Types.OTHER:
+			throw new NotSupportedColumnTypeException(
+					"Query Service : Not supported SQL type.");
+		case Types.REAL:
+			throw new NotSupportedColumnTypeException(
+					"Query Service : Not supported SQL type.");
+		case Types.REF:
+			throw new NotSupportedColumnTypeException(
+					"Query Service : Not supported SQL type.");
+		case Types.SMALLINT:
+			type = ColumnInfo.COLTYPE_INT;
+			break;
+		case Types.STRUCT:
+			throw new NotSupportedColumnTypeException(
+					"Query Service : Not supported SQL type.");
+		case Types.TIME:
+			type = ColumnInfo.COLTYPE_UNKNOWN;
+			break;
+		case Types.TIMESTAMP:
+			type = ColumnInfo.COLTYPE_UNKNOWN;
+			break;
+		case Types.TINYINT:
+			type = ColumnInfo.COLTYPE_UNKNOWN;
+			break;
+		case Types.VARBINARY:
+			type = ColumnInfo.COLTYPE_UNKNOWN;
+			break;
+		case Types.VARCHAR:
+			type = ColumnInfo.COLTYPE_STRING;
+			break;
+		default:
+			type = ColumnInfo.COLTYPE_STRING;
+			break;
+		}
+		return type;
+	}
 }

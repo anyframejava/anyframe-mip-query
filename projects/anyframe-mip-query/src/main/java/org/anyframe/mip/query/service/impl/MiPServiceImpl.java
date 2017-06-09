@@ -28,7 +28,7 @@ import com.tobesoft.platform.data.VariableList;
 /**
  * This class provides methods to call MiPDao to send queries.
  * 
- * @author Jonghoon, Kim
+ * @author Jonghoon Kim
  * 
  */
 public class MiPServiceImpl implements MiPService {
@@ -42,12 +42,14 @@ public class MiPServiceImpl implements MiPService {
 		this.mipDao = mipDao;
 	}
 
-	public void get(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
+	public void get(VariableList inVl, DatasetList inDl, VariableList outVl,
+			DatasetList outDl) throws Exception {
 
 		getList(inVl, inDl, outVl, outDl);
 	}
 
-	public void getList(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
+	public void getList(VariableList inVl, DatasetList inDl,
+			VariableList outVl, DatasetList outDl) throws Exception {
 
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
@@ -68,7 +70,8 @@ public class MiPServiceImpl implements MiPService {
 		}
 	}
 
-	public void getPagingList(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
+	public void getPagingList(VariableList inVl, DatasetList inDl,
+			VariableList outVl, DatasetList outDl) throws Exception {
 
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
@@ -87,8 +90,8 @@ public class MiPServiceImpl implements MiPService {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public void saveAll(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
+	public void saveAll(VariableList inVl, DatasetList inDl,
+			VariableList outVl, DatasetList outDl) throws Exception {
 
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
@@ -96,7 +99,7 @@ public class MiPServiceImpl implements MiPService {
 		Dataset inDs = null;
 
 		String[] arrQuery = null;
-		Map queryMap = new HashMap();
+		Map<String, String> queryMap = new HashMap<String, String>();
 
 		for (int i = 1; i <= querySetCount; i++) {
 
@@ -115,25 +118,29 @@ public class MiPServiceImpl implements MiPService {
 		}
 	}
 
-	public void create(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
+	public void create(VariableList inVl, DatasetList inDl, VariableList outVl,
+			DatasetList outDl) throws Exception {
 
 		String status = MiPQueryServiceImpl.QUERY_INSERT;
 		save(inVl, inDl, outVl, outDl, status);
 	}
 
-	public void remove(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
+	public void remove(VariableList inVl, DatasetList inDl, VariableList outVl,
+			DatasetList outDl) throws Exception {
 
 		String status = MiPQueryServiceImpl.QUERY_DELETE;
 		save(inVl, inDl, outVl, outDl, status);
 	}
 
-	public void update(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
+	public void update(VariableList inVl, DatasetList inDl, VariableList outVl,
+			DatasetList outDl) throws Exception {
 
 		String status = MiPQueryServiceImpl.QUERY_UPDATE;
 		save(inVl, inDl, outVl, outDl, status);
 	}
 
-	public void execute(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
+	public void execute(VariableList inVl, DatasetList inDl,
+			VariableList outVl, DatasetList outDl) throws Exception {
 
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
@@ -144,18 +151,21 @@ public class MiPServiceImpl implements MiPService {
 
 			queryId = inVl.getValueAsString("querySet" + i);
 			inDs = inDl.get("querySet" + i);
+			
 			if (inDs != null) {
 				resultDl = mipDao.execute(queryId, inDs);
-				for (int j = 0; j < resultDl.size(); j++) {
-					outDl.add(resultDl.get(queryId + i));
-				}
+			} else {
+				resultDl = mipDao.execute(queryId);
+			}
+
+			for (int j = 0; j < resultDl.size(); j++) {
+				outDl.add(resultDl.get(queryId + j));
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void save(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl, String status) throws Exception {
-
+	private void save(VariableList inVl, DatasetList inDl, VariableList outVl,
+			DatasetList outDl, String status) throws Exception {
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
 		String queryId = null;
@@ -168,7 +178,7 @@ public class MiPServiceImpl implements MiPService {
 			queryId = inVl.getValueAsString("querySet" + i);
 			inDs = inDl.get("querySet" + i);
 
-			Map queryMap = new HashMap();
+			Map<String, String> queryMap = new HashMap<String, String>();
 			queryMap.put(status, queryId);
 			if (inDs != null) {
 				returnValue = mipDao.saveAll(queryMap, inDs);
@@ -179,7 +189,7 @@ public class MiPServiceImpl implements MiPService {
 		}
 	}
 
-	private int getQuerySetCount(VariableList inVl, VariableList outVl) throws Exception {
+	private int getQuerySetCount(VariableList inVl, VariableList outVl) {
 		int querySetCount = 0;
 		querySetCount = inVl.getValueAsInteger("querySetCount").intValue();
 		return querySetCount;

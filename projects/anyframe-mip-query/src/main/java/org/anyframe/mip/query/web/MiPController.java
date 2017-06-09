@@ -17,7 +17,7 @@ package org.anyframe.mip.query.web;
 
 import java.lang.reflect.Method;
 
-import org.anyframe.exception.BaseException;
+import org.anyframe.exception.MethodInvocationException;
 import org.anyframe.mip.query.web.controller.AbstractMiPController;
 
 import com.tobesoft.platform.PlatformRequest;
@@ -63,22 +63,19 @@ public class MiPController extends AbstractMiPController {
 			method.invoke(bean, new Object[] { inVl, inDl, outVl, outDl });
 		} catch (Exception e) {
 			Throwable te = e.getCause();
-			if (te instanceof BaseException)
-				throw (BaseException) te;
-			else
-				throw new BaseException("Fail to process client request.", te);
+			logger.error("Can not invoke a dispatch method name", te);
+			throw new Exception("Fail to process client request.", te);
 		}
 	}
 
-	private Method getMethod(Object bean, String methodName) throws Exception {
-
+	private Method getMethod(Object bean, String methodName) {
 		Method[] methods = bean.getClass().getMethods();
+		
 		for (int i = 0; i < methods.length; i++) {
 			if (methods[i].getName().equals(methodName)) {
 				return methods[i];
 			}
 		}
-		throw new Exception("Can not find " + methodName + ".");
+		throw new MethodInvocationException("Can not find " + methodName + ".");
 	}
-	
 }

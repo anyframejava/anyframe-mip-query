@@ -38,6 +38,15 @@ function gfnService(strServiceId, strArgument) {
 	
 	var bSync = iif(dsService.getColumn(nRow, "SYNC_YN")=="Y", true, false);
 	
+	// Firstrow 방식으로 정송할지 여부
+	if(indexOf(strArgument, "isFR=") == -1){
+		strArgument += " isFR=N";
+	} else {
+		// Firstrow 방식 사용할 경우, Data 전송 Size 기본값 설정
+		if(indexOf(strArgument, "nextDataSize=") == -1){
+			strArgument += " nextDataSize=1000";
+		}
+	}
 	//get 방식으로 전달될 argument값 세팅
 	var strParameter = strArgument;
 	

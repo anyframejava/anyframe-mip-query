@@ -15,6 +15,7 @@
  */
 package org.anyframe.mip.query.impl;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -29,7 +30,7 @@ import junit.framework.Assert;
 
 import org.anyframe.mip.query.MiPActionCommand;
 import org.anyframe.mip.query.MiPQueryService;
-import org.anyframe.query.QueryServiceException;
+import org.anyframe.query.exception.QueryException;
 import org.anyframe.util.DateUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,26 +85,10 @@ public class MiPQueryServiceTest {
 	private MiPQueryService mipQueryService;
 
 	/**
-	 * Spring Configuration is read.
-	 */
-	// protected String[] getConfigLocations() {
-	// return new String[] { "classpath:/spring/context-*.xml" };
-	// }
-	//
-	// public void setDataSource(DataSource dataSource) {
-	// this.dataSource = dataSource;
-	// }
-	//
-	// public void setMipQueryService(MiPQueryService mipQueryService) {
-	// this.mipQueryService = mipQueryService;
-	// }
-
-	/**
 	 * Basic table is created for test and basic data is entered.
 	 */
 	@Before
-	public void onSetUp() throws Exception {
-		// super.onSetUp();
+	public void onSetUp() {
 		try {
 			Connection conn = dataSource.getConnection();
 			try {
@@ -115,7 +100,10 @@ public class MiPQueryServiceTest {
 					System.out.println("Fail to DROP Table.");
 				}
 
-				statement.executeUpdate("CREATE TABLE TB_MIP_TEST ( " + "TEST_CHAR CHAR(10), " + "TEST_VARCHAR2 VARCHAR2(255)," + "TEST_NUMBER NUMBER(13),"
+				statement.executeUpdate("CREATE TABLE TB_MIP_TEST ( "
+						+ "TEST_CHAR CHAR(10), "
+						+ "TEST_VARCHAR2 VARCHAR2(255),"
+						+ "TEST_NUMBER NUMBER(13),"
 						+ "TEST_DOUBLE NUMBER(8,4)," + "TEST_DATE DATE" + ")");
 			} finally {
 				conn.close();
@@ -135,17 +123,19 @@ public class MiPQueryServiceTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testUpdateDataSet() throws Exception {
+	public void testUpdateDataSet() {
 		insertDataSet();
 
 		Map<String, String> queryMap = new HashMap<String, String>();
 		queryMap.put(MiPQueryService.QUERY_UPDATE, "updateMiPQueryService");
-		int resultUpdate = mipQueryService.update(queryMap, makeUpdateDataSet());
+		int resultUpdate = mipQueryService
+				.update(queryMap, makeUpdateDataSet());
 		Assert.assertEquals(1, resultUpdate);
 
 		Dataset resultDataSet = findDataSet("bbnydory00");
 
-		assertDataSet(resultDataSet, "bbnydory00", "2008-12-01 00:00:00.0", 12345678, 1234.5678, "Anyframe MiPQueryService Test. - UPDATE");
+		assertDataSet(resultDataSet, "bbnydory00", "2008-12-01 00:00:00.0",
+				12345678, 1234.5678, "Anyframe MiPQueryService Test. - UPDATE");
 	}
 
 	/**
@@ -169,7 +159,8 @@ public class MiPQueryServiceTest {
 		findListDataSet(5);
 
 		Dataset resultDataSet = findDataSet("bbnydory00");
-		assertDataSet(resultDataSet, "bbnydory00", "2008-12-01 00:00:00.0", 12345678, 1234.5678, "Anyframe MiPQueryService Test. - UPDATE");
+		assertDataSet(resultDataSet, "bbnydory00", "2008-12-01 00:00:00.0",
+				12345678, 1234.5678, "Anyframe MiPQueryService Test. - UPDATE");
 	}
 
 	/**
@@ -189,68 +180,73 @@ public class MiPQueryServiceTest {
 		queryMap.put(MiPQueryService.QUERY_INSERT, "createMiPQueryService");
 		queryMap.put(MiPQueryService.QUERY_UPDATE, "updateMiPQueryService");
 		queryMap.put(MiPQueryService.QUERY_DELETE, "deleteMiPQueryService");
-		int resultUpdate = mipQueryService.update(queryMap, makeAllDataSet(), new MiPActionCommand() {
+		int resultUpdate = mipQueryService.update(queryMap, makeAllDataSet(),
+				new MiPActionCommand() {
 
-			public void postDelete(Dataset record, int currentRow) {
-			}
+					public void postDelete(Dataset record, int currentRow) {
+					}
 
-			public void postInsert(Dataset record, int currentRow) {
-			}
+					public void postInsert(Dataset record, int currentRow) {
+					}
 
-			public void postUpdate(Dataset record, int currentRow) {
-			}
+					public void postUpdate(Dataset record, int currentRow) {
+					}
 
-			public void preDelete(Dataset record, int currentRow) {
-			}
+					public void preDelete(Dataset record, int currentRow) {
+					}
 
-			public void preInsert(Dataset record, int currentRow) {
-				Variant variant = new Variant();
-				variant.setObject("Anyframe preUpdate");
-				record.setColumn(currentRow, "TEST_VARCHAR2", variant);
-			}
+					public void preInsert(Dataset record, int currentRow) {
+						Variant variant = new Variant();
+						variant.setObject("Anyframe preUpdate");
+						record.setColumn(currentRow, "TEST_VARCHAR2", variant);
+					}
 
-			public void preUpdate(Dataset record, int currentRow) {
-			}
-		});
-		Assert.assertEquals("Fail to process all with ActionCommand.", 3, resultUpdate);
+					public void preUpdate(Dataset record, int currentRow) {
+					}
+				});
+		Assert.assertEquals("Fail to process all with ActionCommand.", 3,
+				resultUpdate);
 
 		Dataset resultDataSet = findDataSet("bbnydory88");
 
-		assertDataSet(resultDataSet, "bbnydory88", "2008-12-01 00:00:00.0", 12345678, 1234.5678, "Anyframe preUpdate");
+		assertDataSet(resultDataSet, "bbnydory88", "2008-12-01 00:00:00.0",
+				12345678, 1234.5678, "Anyframe preUpdate");
 	}
 
 	/**
 	 * [Flow #-4] Positive Case : It is verified to see whether data matching
 	 * search condition comes out when search condition is set at VariantList
 	 * and find method of MiPQeryService is called for.
-	 * 
-	 * @throws Exception
 	 */
 	@Test
-	public void testFindDataSetWithVariant() throws Exception {
+	public void testFindDataSetWithVariant() {
 		insertDataSet();
 
-		Dataset resultDataSet = mipQueryService.search("findMiPQueryService", makeVariantList());
+		Dataset resultDataSet = mipQueryService.search("findMiPQueryService",
+				makeVariantList());
 		Assert.assertEquals(1, resultDataSet.getRowCount());
 
-		assertDataSet(resultDataSet, "bbnydory00", "2008-12-01 00:00:00.0", 12345678, 1234.5678, "Anyframe MiPQueryService Test.");
+		assertDataSet(resultDataSet, "bbnydory00", "2008-12-01 00:00:00.0",
+				12345678, 1234.5678, "Anyframe MiPQueryService Test.");
 	}
 
 	/**
 	 * [Flow #-5] Negative Case : It is verified to see whether Exception
 	 * message is normally passed when wrong Query I.D. is entered.
-	 * 
-	 * @throws Exception
 	 */
 	@Test
-	public void testFindDataSetWithWrongQueryId() throws QueryServiceException {
+	public void testFindDataSetWithWrongQueryId() {
 		try {
 			mipQueryService.search("notexistqueryid", makeVariantList());
 			Assert.fail("Fail to throw exception.");
 		} catch (Exception e) {
-			Assert.assertTrue("Fail to check exception.", e instanceof QueryServiceException);
-			Assert.assertEquals("Fail to compare exception message.", "Query Service : Fail to find queryId [notexistqueryid] in mapping xml files.",
-					((QueryServiceException) e).getMessage());
+			Assert.assertTrue("Fail to check exception.",
+					e instanceof QueryException);
+			Assert
+					.assertEquals(
+							"Fail to compare exception message.",
+							"Query Service : Fail to find queryId [notexistqueryid] in query mappings.",
+							((QueryException) e).getMessage());
 		}
 	}
 
@@ -262,14 +258,19 @@ public class MiPQueryServiceTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testFindDataSetWithoutDynamic() throws QueryServiceException {
+	public void testFindDataSetWithoutDynamic() {
 		try {
-			mipQueryService.search("findMiPQueryServiceWithoutDynamic", makeVariantList());
+			mipQueryService.search("findMiPQueryServiceWithoutDynamic",
+					makeVariantList());
 			Assert.fail("Fail to throw exception.");
 		} catch (Exception e) {
-			Assert.assertTrue("Fail to check exception.", e instanceof QueryServiceException);
-			Assert.assertEquals("Fail to compare exception message.", "Query Service : queryId [findMiPQueryServiceWithoutDynamic] is not dynamic statements.",
-					((QueryServiceException) e).getMessage());
+			Assert.assertTrue("Fail to check exception.",
+					e instanceof QueryException);
+			Assert
+					.assertEquals(
+							"Fail to compare exception message.",
+							"Query Service : queryId [findMiPQueryServiceWithoutDynamic] is not dynamic statements.",
+							((QueryException) e).getMessage());
 		}
 	}
 
@@ -281,15 +282,19 @@ public class MiPQueryServiceTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void testFindDataSetWithWrongQuery() throws QueryServiceException {
+	public void testFindDataSetWithWrongQuery() {
 		try {
-			mipQueryService.search("findMiPQueryServiceWithWrongQuery", makeVariantList());
+			mipQueryService.search("findMiPQueryServiceWithWrongQuery",
+					makeVariantList());
 			Assert.fail("Fail to throw exception.");
 		} catch (Exception e) {
-			Assert.assertTrue(e instanceof QueryServiceException);
-			QueryServiceException qe = (QueryServiceException) e;
-			Assert.assertEquals("Fail to compare sql error code.", "904", qe.getSqlErrorCode());
-			Assert.assertEquals("Fail to compare sql error message.", "ORA-00904: \"A\".\"NOTEXITCOLUMN\": 부적합한 식별자\n", qe.getSqlErrorMessage());
+			Assert.assertTrue(e instanceof QueryException);
+			QueryException qe = (QueryException) e;
+			Assert.assertEquals("Fail to compare sql error code.", "904", qe
+					.getSqlErrorCode());
+			Assert.assertEquals("Fail to compare sql error message.",
+					"ORA-00904: \"A\".\"NOTEXITCOLUMN\": 부적합한 식별자\n", qe
+							.getSqlErrorMessage());
 		}
 	}
 
@@ -298,11 +303,12 @@ public class MiPQueryServiceTest {
 	 * 
 	 * @throws Exception
 	 */
-	private void insertDataSet() throws Exception {
+	private void insertDataSet() {
 		Map<String, String> queryMap = new HashMap<String, String>();
 		queryMap.put(MiPQueryService.QUERY_INSERT, "createMiPQueryService");
 
-		int resultInsert = mipQueryService.update(queryMap, makeInsertDataSet());
+		int resultInsert = mipQueryService
+				.update(queryMap, makeInsertDataSet());
 		Assert.assertEquals("Fail to insert MiPDataSet.", 3, resultInsert);
 
 		findListDataSet(3);
@@ -314,26 +320,34 @@ public class MiPQueryServiceTest {
 	 * @param expected
 	 * @throws Exception
 	 */
-	private void findListDataSet(int expected) throws Exception {
-		Dataset resultDataSet = mipQueryService.search("findListMiPQueryService", makeSelectDataSet("%bbnydory%"));
-		Assert.assertEquals("Fail to find MiPDataSet.", expected, resultDataSet.getRowCount());
+	private void findListDataSet(int expected) {
+		Dataset resultDataSet = mipQueryService.search(
+				"findListMiPQueryService", makeSelectDataSet("%bbnydory%"));
+		Assert.assertEquals("Fail to find MiPDataSet.", expected, resultDataSet
+				.getRowCount());
 
 		int totalRowCount = resultDataSet.getRowCount();
 		for (int rowNum = 0; rowNum < totalRowCount; rowNum++) {
 			Variant testChar = resultDataSet.getColumn(rowNum, "TEST_CHAR");
-			Assert.assertTrue("Fail to check result.", testChar.getString().startsWith("bbnydory"));
+			Assert.assertTrue("Fail to check result.", testChar.getString()
+					.startsWith("bbnydory"));
 
 			Variant testDate = resultDataSet.getColumn(rowNum, "TEST_DATE");
-			Assert.assertEquals("Fail to check result.", "2008-12-01 00:00:00.0", testDate.getDate().toString());
+			Assert.assertEquals("Fail to check result.",
+					"2008-12-01 00:00:00.0", testDate.getDate().toString());
 
 			Variant testNumber = resultDataSet.getColumn(rowNum, "TEST_NUMBER");
-			Assert.assertEquals("Fail to check result.", 12345678, testNumber.getDouble().intValue());
+			Assert.assertEquals("Fail to check result.", 12345678, testNumber
+					.getDouble().intValue());
 
 			Variant testDouble = resultDataSet.getColumn(rowNum, "TEST_DOUBLE");
-			Assert.assertEquals("Fail to check result.", 1234.5678, testDouble.getDouble().doubleValue());
+			Assert.assertEquals("Fail to check result.", 1234.5678, testDouble
+					.getDouble().doubleValue());
 
-			Variant testVarchar = resultDataSet.getColumn(rowNum, "TEST_VARCHAR2");
-			Assert.assertTrue("Fail to check result.", testVarchar.getString().startsWith("Anyframe MiPQueryService Test."));
+			Variant testVarchar = resultDataSet.getColumn(rowNum,
+					"TEST_VARCHAR2");
+			Assert.assertTrue("Fail to check result.", testVarchar.getString()
+					.startsWith("Anyframe MiPQueryService Test."));
 
 		}
 	}
@@ -343,10 +357,10 @@ public class MiPQueryServiceTest {
 	 * 
 	 * @param searchKeyword
 	 * @return
-	 * @throws QueryServiceException
 	 */
-	private Dataset findDataSet(String searchKeyword) throws Exception {
-		Dataset resultDataSet = mipQueryService.search("findMiPQueryService", makeSelectDataSet(searchKeyword));
+	private Dataset findDataSet(String searchKeyword) {
+		Dataset resultDataSet = mipQueryService.search("findMiPQueryService",
+				makeSelectDataSet(searchKeyword));
 		Assert.assertEquals(1, resultDataSet.getRowCount());
 
 		return resultDataSet;
@@ -362,21 +376,28 @@ public class MiPQueryServiceTest {
 	 * @param col4
 	 * @param col5
 	 */
-	private void assertDataSet(Dataset resultDataSet, String col1, String col2, int col3, double col4, String col5) {
+	private void assertDataSet(Dataset resultDataSet, String col1, String col2,
+			int col3, double col4, String col5) {
 		Variant testChar = resultDataSet.getColumn(0, "TEST_CHAR");
-		Assert.assertEquals("Fail to check result.", col1, testChar.getString());
+		Assert
+				.assertEquals("Fail to check result.", col1, testChar
+						.getString());
 
 		Variant testDate = resultDataSet.getColumn(0, "TEST_DATE");
-		Assert.assertEquals("Fail to check result.", col2, testDate.getDate().toString());
+		Assert.assertEquals("Fail to check result.", col2, testDate.getDate()
+				.toString());
 
 		Variant testNumber = resultDataSet.getColumn(0, "TEST_NUMBER");
-		Assert.assertEquals("Fail to check result.", col3, testNumber.getDouble().intValue());
+		Assert.assertEquals("Fail to check result.", col3, testNumber
+				.getDouble().intValue());
 
 		Variant testDouble = resultDataSet.getColumn(0, "TEST_DOUBLE");
-		Assert.assertEquals("Fail to check result.", col4, testDouble.getDouble().doubleValue());
+		Assert.assertEquals("Fail to check result.", col4, testDouble
+				.getDouble().doubleValue());
 
 		Variant testVarchar = resultDataSet.getColumn(0, "TEST_VARCHAR2");
-		Assert.assertEquals("Fail to check result.", col5, testVarchar.getString());
+		Assert.assertEquals("Fail to check result.", col5, testVarchar
+				.getString());
 	}
 
 	/**
@@ -488,7 +509,7 @@ public class MiPQueryServiceTest {
 	 * @return
 	 * @throws Exception
 	 */
-	private Dataset makeAllDataSet() throws Exception {
+	private Dataset makeAllDataSet() throws IOException {
 		Dataset allDataSet = new Dataset();
 		allDataSet.setDataSetID("bbnydory_all");
 		allDataSet.addStringColumn("TEST_CHAR");
@@ -589,6 +610,6 @@ public class MiPQueryServiceTest {
 	}
 
 	private Timestamp getDate() {
-		return DateUtil.string2Timestamp("2008-12-01", "yyyy-MM-dd");
+		return DateUtil.stringToTimestamp("2008-12-01", "yyyy-MM-dd");
 	}
 }

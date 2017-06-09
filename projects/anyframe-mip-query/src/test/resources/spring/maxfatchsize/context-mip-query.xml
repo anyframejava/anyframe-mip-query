@@ -36,7 +36,7 @@
     
     
     <!--  SqlLoader -->
-	<bean name="sqlLoader" class="org.anyframe.query.impl.config.loader.SQLLoader">
+	<bean name="sqlLoader" class="org.anyframe.query.impl.config.loader.MappingXMLLoader">
 		<property name="mappingFiles">
 			<value>classpath:/mappings/maxfatchsize/testcase-queries-mip-maxfatchsize.xml</value>
 		</property>	

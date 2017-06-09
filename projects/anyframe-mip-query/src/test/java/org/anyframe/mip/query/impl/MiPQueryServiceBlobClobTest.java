@@ -29,8 +29,8 @@ import javax.sql.DataSource;
 
 import junit.framework.Assert;
 
+import org.anyframe.exception.InitializationException;
 import org.anyframe.mip.query.MiPQueryService;
-import org.anyframe.query.QueryServiceException;
 import org.anyframe.util.DateUtil;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,7 +56,7 @@ public class MiPQueryServiceBlobClobTest {
 	private MiPQueryService mipQueryService;
 
 	@Before
-	public void onSetUp() throws Exception {
+	public void onSetUp() {
 		try {
 			Connection conn = dataSource.getConnection();
 			try {
@@ -81,7 +81,7 @@ public class MiPQueryServiceBlobClobTest {
 	}
 
 	@Test
-	public void testInsertBlobClob() throws QueryServiceException {
+	public void testInsertBlobClob() {
 		Map<String, String> queryMap = new HashMap<String, String>();
 		queryMap.put(MiPQueryService.QUERY_INSERT, "createBlobClob");
 		int resultCount = mipQueryService.update(queryMap,
@@ -90,14 +90,14 @@ public class MiPQueryServiceBlobClobTest {
 	}
 
 	@Test
-	public void testUpdateBlobClob() throws Exception {
+	public void testUpdateBlobClob() {
 		// Data initialization
 		try {
 			Map<String, String> sqlMap = new HashMap<String, String>();
 			sqlMap.put(MiPQueryService.QUERY_INSERT, "createBlobClob");
 			mipQueryService.update(sqlMap, makeInsertLobDataSet());
 		} catch (Exception e) {
-			throw new Exception(
+			throw new InitializationException(
 					"An Exception has occurred while initializing Test Update Data",
 					e);
 		}
@@ -111,13 +111,13 @@ public class MiPQueryServiceBlobClobTest {
 	}
 
 	@Test
-	public void testFindBlobClob() throws Exception {
+	public void testFindBlobClob() {
 		try {
 			Map<String, String> sqlMap = new HashMap<String, String>();
 			sqlMap.put(MiPQueryService.QUERY_INSERT, "createBlobClob");
 			mipQueryService.update(sqlMap, makeInsertLobDataSet());
 		} catch (Exception e) {
-			throw new Exception(
+			throw new InitializationException(
 					"An Exception has occurred while initializing Test Update Data",
 					e);
 		}
@@ -268,6 +268,6 @@ public class MiPQueryServiceBlobClobTest {
 	}
 
 	private Timestamp getDate() {
-		return DateUtil.string2Timestamp("2008-12-01", "yyyy-MM-dd");
+		return DateUtil.stringToTimestamp("2008-12-01", "yyyy-MM-dd");
 	}
 }

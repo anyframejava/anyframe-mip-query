@@ -80,16 +80,16 @@ public class MiPServiceTest {
 
 	private static short TYPE_NORMAL = 1;
 	private static short TYPE_INSERT = 2;
-	//private static short TYPE_UPDATE = 4;
+	// private static short TYPE_UPDATE = 4;
 
 	@Inject
 	private MiPService mipService;
-	
+
 	@Inject
 	private DataSource dataSource;
-	
+
 	@Before
-	public final void onSetUp() throws Exception {
+	public final void onSetUp() {
 		// Test DB Setting
 		try {
 			Connection conn = dataSource.getConnection();
@@ -102,12 +102,15 @@ public class MiPServiceTest {
 					System.out.println("Unable to drop table." + e);
 				}
 				// create table
-				statement.execute("CREATE TABLE TEST_BOARD("
-						+ "BOARD_NO VARCHAR(20) NOT NULL,"
-						+ "BOARD_TITLE VARCHAR(50) NOT NULL,"
-						+ "CONTENTS VARCHAR(255)," + "REG_ID VARCHAR(20),"
-						+ "REG_DATE VARCHAR(10),"
-						+ "CONSTRAINT PK_BOARD_MIP PRIMARY KEY(BOARD_NO)" + ")");
+				statement
+						.execute("CREATE TABLE TEST_BOARD("
+								+ "BOARD_NO VARCHAR(20) NOT NULL,"
+								+ "BOARD_TITLE VARCHAR(50) NOT NULL,"
+								+ "CONTENTS VARCHAR(255),"
+								+ "REG_ID VARCHAR(20),"
+								+ "REG_DATE VARCHAR(10),"
+								+ "CONSTRAINT PK_BOARD_MIP PRIMARY KEY(BOARD_NO)"
+								+ ")");
 				// insert data
 				statement.executeUpdate("INSERT INTO TEST_BOARD VALUES"
 						+ "('BOARD-00001','TITLE-0001','CONTENTS-0001'"
@@ -168,8 +171,11 @@ public class MiPServiceTest {
 		Dataset ds1 = outDl.get("querySet1");
 		Dataset ds2 = outDl.get("querySet2");
 
-		Assert.assertEquals("BOARD-00002", ds1.getColumnAsString(0, "BOARD_NO"));
-		Assert.assertEquals("TITLE-0001", ds2.getColumnAsString(0, "BOARD_TITLE"));
+		Assert
+				.assertEquals("BOARD-00002", ds1.getColumnAsString(0,
+						"BOARD_NO"));
+		Assert.assertEquals("TITLE-0001", ds2.getColumnAsString(0,
+				"BOARD_TITLE"));
 	}
 
 	/**
@@ -282,7 +288,7 @@ public class MiPServiceTest {
 		dsCreate1.setColumn(0, "CONTENTS", "CONTENTS-00004");
 		dsCreate1.setColumn(0, "REG_ID", "INSERT_TEST1");
 		dsCreate1.setColumn(0, "REG_DATE", "2011-03-02");
-		dsCreate1.setRowType(0, MiPServiceTest.TYPE_INSERT );
+		dsCreate1.setRowType(0, MiPServiceTest.TYPE_INSERT);
 
 		dsCreate1.appendRow();
 		dsCreate1.setColumn(1, "BOARD_NO", "BOARD-00005");
@@ -526,11 +532,11 @@ public class MiPServiceTest {
 		dsSave.setColumn(2, "BOARD_NO", "BOARD-00002");
 		dsSave.setRowType(2, MiPServiceTest.TYPE_NORMAL);
 		dsSave.deleteRow(2);
-		
+
 		dsSave.setUpdate(false);
-		
+
 		inDl.add("querySet1", dsSave);
-		
+
 		mipService.saveAll(inVl, inDl, outVl, outDl);
 
 		Assert.assertEquals("3", outVl.get("querySet1").getValue().getString());

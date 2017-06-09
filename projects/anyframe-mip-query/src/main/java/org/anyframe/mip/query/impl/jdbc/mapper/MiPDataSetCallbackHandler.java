@@ -31,68 +31,69 @@ import com.tobesoft.platform.data.Variant;
  * 
  * @author Soyon Lim
  */
-public class MiPDataSetCallbackHandler extends MiPCallbackSupport
-        implements RiaRowCallback {
+public class MiPDataSetCallbackHandler extends MiPCallbackSupport implements
+		RiaRowCallback {
 
-    private int rowCount;
+	private int rowCount;
 
-    private int columnCount;
+	private int columnCount;
 
-    private int[] columnTypes;
+	private int[] columnTypes;
 
-    private String[] fieldNames;
+	private String[] fieldNames;
 
-    //Default Constructor
-    public MiPDataSetCallbackHandler(){
-    	
-    }
-    
-    public void setDataSet(Object dataSet){
-    	this.dataSet = (Dataset) dataSet;
-    }
-    
-    public MiPDataSetCallbackHandler(Dataset dataSet, QueryInfo queryInfo) {
-        this.dataSet = dataSet;
-        this.queryInfo = queryInfo;
-    }
+	// Default Constructor
+	public MiPDataSetCallbackHandler() {
 
-    public void processMetaData(ResultSet rs) throws SQLException {
-        ResultSetMetaData rsmd = rs.getMetaData();
-        this.columnCount = rsmd.getColumnCount();
-        this.columnTypes = new int[this.columnCount];
-        this.fieldNames = new String[this.columnCount];
+	}
 
-        dataSet.addColumn("_chk", ColumnInfo.COLTYPE_STRING, 256);
-        
-        if (pagination.isPaging()) {
+	public void setDataSet(Object dataSet) {
+		this.dataSet = (Dataset) dataSet;
+	}
+
+	public MiPDataSetCallbackHandler(Dataset dataSet, QueryInfo queryInfo) {
+		this.dataSet = dataSet;
+		this.queryInfo = queryInfo;
+	}
+
+	public void processMetaData(ResultSet rs) throws SQLException {
+		ResultSetMetaData rsmd = rs.getMetaData();
+		this.columnCount = rsmd.getColumnCount();
+		this.columnTypes = new int[this.columnCount];
+		this.fieldNames = new String[this.columnCount];
+
+		dataSet.addColumn("_chk", ColumnInfo.COLTYPE_STRING, 256);
+
+		if (pagination.isPaging()) {
 			dataSet.addConstColumn("totalCount", pagination.getRecordCount());
 			dataSet.addConstColumn("pageIndex", pagination.getPageIndex());
 			dataSet.addConstColumn("pageCount", pagination.getPageCount());
 			dataSet.addConstColumn("pageSize", pagination.getPageSize());
-		} 
-        
-        for (int i = 0; i < this.columnCount; i++) {
-        	
-        	String fieldName = getMappingStylekey(queryInfo, rsmd.getColumnLabel(i + 1));
-        	
-        	int colPrecision = rsmd.getPrecision(i + 1);
+		}
 
-            dataSet.addColumn(fieldName, getDsType(rsmd.getColumnType(i + 1)),
-                colPrecision);
+		for (int i = 0; i < this.columnCount; i++) {
 
-            this.columnTypes[i] = rsmd.getColumnType(i + 1);
-            this.fieldNames[i] = fieldName;
-        }
-    }
+			String fieldName = getMappingStylekey(queryInfo, rsmd
+					.getColumnLabel(i + 1));
 
-    public void processRow(ResultSet rs) throws SQLException {
+			int colPrecision = rsmd.getPrecision(i + 1);
 
-        dataSet.appendRow();
-        for (int i = 1; i <= columnCount; i++) {
-            Variant variant = new Variant();
-            variant.setObject(getValues(rs, i, columnTypes[i - 1]));
-            dataSet.setColumn(rowCount, fieldNames[i - 1], variant);
-        }
-        rowCount++;
-    }
+			dataSet.addColumn(fieldName, getDsType(rsmd.getColumnType(i + 1)),
+					colPrecision);
+
+			this.columnTypes[i] = rsmd.getColumnType(i + 1);
+			this.fieldNames[i] = fieldName;
+		}
+	}
+
+	public void processRow(ResultSet rs) throws SQLException {
+
+		dataSet.appendRow();
+		for (int i = 1; i <= columnCount; i++) {
+			Variant variant = new Variant();
+			variant.setObject(getValues(rs, i, columnTypes[i - 1]));
+			dataSet.setColumn(rowCount, fieldNames[i - 1], variant);
+		}
+		rowCount++;
+	}
 }

@@ -39,20 +39,20 @@ import com.tobesoft.platform.data.VariableList;
 import com.tobesoft.platform.data.Variant;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:/spring/context-*.xml"})
+@ContextConfiguration(locations = { "classpath:/spring/context-*.xml" })
 public class MiPPQueryServiceDynamicTest {
-	
+
 	@Inject
 	private DataSource dataSource;
-	
+
 	@Inject
 	private MiPQueryService mipQueryService;
 
 	/**
-	 * Basic table is created for test and and basic data is entered. 
+	 * Basic table is created for test and and basic data is entered.
 	 */
 	@Before
-	public void onSetUp() throws Exception {
+	public void onSetUp() {
 		try {
 			Connection conn = dataSource.getConnection();
 			try {
@@ -65,13 +65,13 @@ public class MiPPQueryServiceDynamicTest {
 				}
 
 				statement.executeUpdate("CREATE TABLE TB_MIP_USER ( "
-						+ "LOGON_ID  VARCHAR(20), "
-						+ "PASSWORD VARCHAR(20),"
-						+ "NAME VARCHAR(20)," 
-						+ "PRIMARY KEY (LOGON_ID))");
-				
-				statement.executeUpdate("INSERT INTO TB_MIP_USER VALUES ('admin', 'admin', 'ADMIN')");
-				statement.executeUpdate("INSERT INTO TB_MIP_USER VALUES ('test', 'test123', 'TESTER')");
+						+ "LOGON_ID  VARCHAR(20), " + "PASSWORD VARCHAR(20),"
+						+ "NAME VARCHAR(20)," + "PRIMARY KEY (LOGON_ID))");
+
+				statement
+						.executeUpdate("INSERT INTO TB_MIP_USER VALUES ('admin', 'admin', 'ADMIN')");
+				statement
+						.executeUpdate("INSERT INTO TB_MIP_USER VALUES ('test', 'test123', 'TESTER')");
 			} finally {
 				conn.close();
 			}
@@ -80,115 +80,123 @@ public class MiPPQueryServiceDynamicTest {
 			Assert.fail("Unable to initialize database for test. " + e);
 		}
 	}
-	
+
 	@Test
-	public void testDynamicWithForEachVariableList() throws Exception {
+	public void testDynamicWithForEachVariableList() {
 		List<String> logonIdList = new ArrayList<String>();
 		logonIdList.add("admin");
 		logonIdList.add("test");
-		
+
 		VariableList variableList = new VariableList();
 		Variant variant = new Variant(logonIdList);
-		
-		Variable variable = new Variable("logonIdList",  variant);
-		
+
+		Variable variable = new Variable("logonIdList", variant);
+
 		variableList.add(variable);
-		
-		Dataset resultDs = mipQueryService.search("dynamicWithForEachVariableList",variableList );
-		
-		Assert.assertEquals( 2, resultDs.getRowCount() );
-		Assert.assertEquals( "ADMIN", resultDs.getColumnAsObject( 0 , "name") );
-		Assert.assertEquals( "TESTER", resultDs.getColumnAsObject( 1 , "name") );
+
+		Dataset resultDs = mipQueryService.search(
+				"dynamicWithForEachVariableList", variableList);
+
+		Assert.assertEquals(2, resultDs.getRowCount());
+		Assert.assertEquals("ADMIN", resultDs.getColumnAsObject(0, "name"));
+		Assert.assertEquals("TESTER", resultDs.getColumnAsObject(1, "name"));
 	}
-	
+
 	@Test
-	public void testDynamicQueryUsingTextReplaceVariableList() throws Exception {
-        // 1. set data for test
-    	VariableList variableList = new VariableList();
-		
-    	Variable variable1 = new Variable("schema", new Variant("TB_MIP_USER"));
-    	Variable variable2 = new Variable("sortColumn", new Variant("NAME"));
-		
+	public void testDynamicQueryUsingTextReplaceVariableList() {
+		// 1. set data for test
+		VariableList variableList = new VariableList();
+
+		Variable variable1 = new Variable("schema", new Variant("TB_MIP_USER"));
+		Variable variable2 = new Variable("sortColumn", new Variant("NAME"));
+
 		variableList.add(variable1);
 		variableList.add(variable2);
-		
-        // 2. execute query
-        Dataset resultDs =  mipQueryService.search("dynamicQueryUsingTextReplaceVariableList", variableList);
-        Assert.assertEquals( 2, resultDs.getRowCount() );
-        Assert.assertEquals( "admin", resultDs.getColumnAsObject( 0 , "logonId") );
-        Assert.assertEquals( "test", resultDs.getColumnAsObject( 1 , "logonId") );
-    }
-    
+
+		// 2. execute query
+		Dataset resultDs = mipQueryService.search(
+				"dynamicQueryUsingTextReplaceVariableList", variableList);
+		Assert.assertEquals(2, resultDs.getRowCount());
+		Assert.assertEquals("admin", resultDs.getColumnAsObject(0, "logonId"));
+		Assert.assertEquals("test", resultDs.getColumnAsObject(1, "logonId"));
+	}
+
 	@Test
-    public void testDynamicQueryUsingIfVariableList() throws Exception {
-        
-    	//When SEARCH_CONDITION is NULL
-    	// 1. set data for test
-    	VariableList variableList = new VariableList();
-		
-    	Variable variable1 = new Variable("SEARCH_CONDITION", new Variant("") );
-		
+	public void testDynamicQueryUsingIfVariableList() {
+
+		// When SEARCH_CONDITION is NULL
+		// 1. set data for test
+		VariableList variableList = new VariableList();
+
+		Variable variable1 = new Variable("SEARCH_CONDITION", new Variant(""));
+
 		variableList.add(variable1);
-		
-        // 2. execute query
-        Dataset resultDs =  mipQueryService.search("dynamicQueryUsingIfVariableList", variableList);
-        Assert.assertEquals( 2 , resultDs.getRowCount() );
-        
-        //USER whose LOGON_I.D. is admin is searched.
-        variableList.clear();
-        
+
+		// 2. execute query
+		Dataset resultDs = mipQueryService.search(
+				"dynamicQueryUsingIfVariableList", variableList);
+		Assert.assertEquals(2, resultDs.getRowCount());
+
+		// USER whose LOGON_I.D. is admin is searched.
+		variableList.clear();
+
 		variableList.add("SEARCH_CONDITION", "LOGON_ID");
 		variableList.add("SEARCH_KEYWORD", "admin");
-        
-		resultDs =  mipQueryService.search("dynamicQueryUsingIfVariableList", variableList);
-		
-		Assert.assertEquals( 1 , resultDs.getRowCount() );
-		Assert.assertEquals( "admin" , resultDs.getColumnAsString( 0 , "logonId") );
-		
-		//USER whose LOGON_I.D. is test123 is searched.
-        variableList.clear();
-        
+
+		resultDs = mipQueryService.search("dynamicQueryUsingIfVariableList",
+				variableList);
+
+		Assert.assertEquals(1, resultDs.getRowCount());
+		Assert.assertEquals("admin", resultDs.getColumnAsString(0, "logonId"));
+
+		// USER whose LOGON_I.D. is test123 is searched.
+		variableList.clear();
+
 		variableList.add("SEARCH_CONDITION", "NAME");
 		variableList.add("SEARCH_KEYWORD", "TESTER");
-        
-		resultDs =  mipQueryService.search("dynamicQueryUsingIfVariableList", variableList);
-		
-		Assert.assertEquals( 1 , resultDs.getRowCount() );
-		Assert.assertEquals( "TESTER" , resultDs.getColumnAsString( 0 , "name") );
-    }
-    
+
+		resultDs = mipQueryService.search("dynamicQueryUsingIfVariableList",
+				variableList);
+
+		Assert.assertEquals(1, resultDs.getRowCount());
+		Assert.assertEquals("TESTER", resultDs.getColumnAsString(0, "name"));
+	}
+
 	@Test
-    public void testDynamicQueryUsingIfDataSet() throws Exception {
-        
-    	//When SEARCH_CONDITION is NULL
-    	// 1. set data for test
+	public void testDynamicQueryUsingIfDataSet() {
+
+		// When SEARCH_CONDITION is NULL
+		// 1. set data for test
 		Dataset dsSearch = new Dataset();
 		dsSearch.addStringColumn("SEARCH_CONDITION");
 		dsSearch.addStringColumn("SEARCH_KEYWORD");
-		
+
 		dsSearch.appendRow();
-		dsSearch.setColumn( 0, "SEARCH_CONDITION", "" );
-		
-        // 2. execute query
-        Dataset resultDs =  mipQueryService.search("dynamicQueryUsingIfDataSet", dsSearch);
-        Assert.assertEquals( 2 , resultDs.getRowCount() );
-        
-        //USER whose LOGON_I.D. is admin is searched.
-		dsSearch.setColumn( 0, "SEARCH_CONDITION", "LOGON_ID" );
-		dsSearch.setColumn( 0, "SEARCH_KEYWORD", "admin" );
-		
-		resultDs =  mipQueryService.search("dynamicQueryUsingIfDataSet", dsSearch);
-		
-		Assert.assertEquals( 1 , resultDs.getRowCount() );
-		Assert.assertEquals( "admin" , resultDs.getColumnAsString( 0 , "logonId") );
-		
-		//USER whose LOGON_I.D. is test123 is searched.
-		dsSearch.setColumn( 0, "SEARCH_CONDITION", "NAME" );
-		dsSearch.setColumn( 0, "SEARCH_KEYWORD", "TESTER" );
-		
-		resultDs =  mipQueryService.search("dynamicQueryUsingIfDataSet", dsSearch);
-		
-		Assert.assertEquals( 1 , resultDs.getRowCount() );
-		Assert.assertEquals( "TESTER" , resultDs.getColumnAsString( 0 , "name") );
-    }
+		dsSearch.setColumn(0, "SEARCH_CONDITION", "");
+
+		// 2. execute query
+		Dataset resultDs = mipQueryService.search("dynamicQueryUsingIfDataSet",
+				dsSearch);
+		Assert.assertEquals(2, resultDs.getRowCount());
+
+		// USER whose LOGON_I.D. is admin is searched.
+		dsSearch.setColumn(0, "SEARCH_CONDITION", "LOGON_ID");
+		dsSearch.setColumn(0, "SEARCH_KEYWORD", "admin");
+
+		resultDs = mipQueryService.search("dynamicQueryUsingIfDataSet",
+				dsSearch);
+
+		Assert.assertEquals(1, resultDs.getRowCount());
+		Assert.assertEquals("admin", resultDs.getColumnAsString(0, "logonId"));
+
+		// USER whose LOGON_I.D. is test123 is searched.
+		dsSearch.setColumn(0, "SEARCH_CONDITION", "NAME");
+		dsSearch.setColumn(0, "SEARCH_KEYWORD", "TESTER");
+
+		resultDs = mipQueryService.search("dynamicQueryUsingIfDataSet",
+				dsSearch);
+
+		Assert.assertEquals(1, resultDs.getRowCount());
+		Assert.assertEquals("TESTER", resultDs.getColumnAsString(0, "name"));
+	}
 }

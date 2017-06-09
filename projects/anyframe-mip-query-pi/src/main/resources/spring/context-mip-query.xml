@@ -40,7 +40,7 @@
     	<constructor-arg ref="mipjdbcTemplate"/>
     </bean> 
     
-	<bean name="mipSqlLoader" class="org.anyframe.query.impl.config.loader.SQLLoader">
+	<bean name="mipSqlLoader" class="org.anyframe.query.impl.config.loader.MappingXMLLoader">
 		<property name="mappingFiles">
 			<value>classpath:sql/mip-query/mapping-*.xml</value>
 		</property>	

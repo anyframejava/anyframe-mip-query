@@ -18,7 +18,7 @@ package org.anyframe.mip.query;
 import java.io.PrintWriter;
 import java.util.Map;
 
-import org.anyframe.query.QueryServiceException;
+import org.anyframe.query.exception.QueryException;
 
 import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.DatasetList;
@@ -50,7 +50,7 @@ import com.tobesoft.platform.data.VariableList;
  *     &lt;property name=&quot;nativeJdbcExtractor&quot; ref=&quot;nativeJdbcExtractor&quot;/&gt;
  * &lt;/bean&gt;
  * 
- * &lt;bean name="sqlLoader" class="org.anyframe.query.impl.config.loader.SQLLoader"&gt;
+ * &lt;bean name="sqlLoader" class="org.anyframe.query.impl.config.loader.MappingXMLLoader"&gt;
  *      &lt;property name="mappingFiles"&gt;
  *           &lt;value&gt;classpath:/mappings/testcase-*.xml&lt;/value&gt;
  *      &lt;/property&gt;
@@ -88,10 +88,10 @@ public interface MiPQueryService {
 	 * @param variableList
 	 *            VariableList including the query conditions
 	 * @return Dataset of extracted out parameters
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	Dataset search(String queryId, VariableList variableList) throws Exception;
+	Dataset search(String queryId, VariableList variableList) throws QueryException;
 
 	/**
 	 * This is a method for querying with paging using the VariableList
@@ -106,10 +106,10 @@ public interface MiPQueryService {
 	 *            page size which expected to be displayed per page (pageSize >
 	 *            0)
 	 * @return Dataset of extracted out parameters
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	Dataset search(String queryId, VariableList variableList, int pageIndex, int pageSize) throws Exception;
+	Dataset search(String queryId, VariableList variableList, int pageIndex, int pageSize) throws QueryException;
 
 	/**
 	 * This is a method for querying using the Dataset
@@ -119,10 +119,10 @@ public interface MiPQueryService {
 	 * @param dataSet
 	 *            the Dataset including the query conditions
 	 * @return Dataset of extracted out parameters
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	Dataset search(String queryId, Dataset dataSet) throws Exception;
+	Dataset search(String queryId, Dataset dataSet) throws QueryException;
 
 	/**
 	 * This is the method at querying using the VariableList. The return value
@@ -142,10 +142,10 @@ public interface MiPQueryService {
 	 *            the id of Dataset for saving the query result
 	 * @param writer
 	 *            the PrintWriter object for writing the query result
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	void search(String queryId, VariableList variableList, int pageIndex, int pageSize, String dataSetName, PrintWriter writer) throws Exception;
+	void search(String queryId, VariableList variableList, int pageIndex, int pageSize, String dataSetName, PrintWriter writer) throws QueryException;
 
 	/**
 	 * This is a method for querying using the Dataset for paging
@@ -156,10 +156,10 @@ public interface MiPQueryService {
 	 *            the Dataset including the query conditions, page
 	 *            index("pageIndex") and page size("pageSize").
 	 * @return Dataset of extracted out parameters
-	 * @throws Exception
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	Dataset searchWithPaging(String queryId, Dataset dataSet) throws Exception;
+	Dataset searchWithPaging(String queryId, Dataset dataSet) throws QueryException;
 
 	/**
 	 * This is the method for inserting, updating and deleting the unitary data
@@ -170,10 +170,10 @@ public interface MiPQueryService {
 	 * @param variableList
 	 *            the VariableList including the query conditions
 	 * @return the number of records affected
-	 * @throws QueryServiceException
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	int update(String queryId, VariableList variableList) throws QueryServiceException;
+	int update(String queryId, VariableList variableList) throws QueryException;
 
 	/**
 	 * This is the method for inserting, updating and deleting using
@@ -192,11 +192,10 @@ public interface MiPQueryService {
 	 * @param paramDataSet
 	 *            the Dataset including the query conditions
 	 * @return the number of records affected
-	 * @throws QueryServiceException
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	@SuppressWarnings("unchecked")
-	int update(String queryId, VariableList variableList, Map queryMap, Dataset paramDataSet) throws QueryServiceException;
+	int update(String queryId, VariableList variableList, Map<String, String> queryMap, Dataset paramDataSet) throws QueryException;
 
 	/**
 	 * This is for inserting, updating and deleting using VariableList and
@@ -219,11 +218,10 @@ public interface MiPQueryService {
 	 *            the MiPActionCommand including the business logic before/after
 	 *            the insert, update, delete execution.
 	 * @return the number of records affected
-	 * @throws QueryServiceException
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	@SuppressWarnings("unchecked")
-	int update(String queryId, VariableList variableList, Map queryMap, Dataset dataSet, MiPActionCommand actionCommand) throws QueryServiceException;
+	int update(String queryId, VariableList variableList, Map<String, String> queryMap, Dataset dataSet, MiPActionCommand actionCommand) throws QueryException;
 
 	/**
 	 * the method for inserting, updating and deleting using the Dataset to the
@@ -238,11 +236,10 @@ public interface MiPQueryService {
 	 * @param dataSet
 	 *            the Dataset including the query conditions
 	 * @return the number of records affected
-	 * @throws QueryServiceException
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	@SuppressWarnings("unchecked")
-	int update(Map queryMap, Dataset dataSet) throws QueryServiceException;
+	int update(Map<String, String> queryMap, Dataset dataSet) throws QueryException;
 
 	/**
 	 * This is the method for inserting, updating and deleting using the Dataset
@@ -261,11 +258,10 @@ public interface MiPQueryService {
 	 *            the MiPActionCommand including the business logic before/after
 	 *            the insert, update, delete execution.
 	 * @return the number of records affected
-	 * @throws QueryServiceException
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	@SuppressWarnings("unchecked")
-	int update(Map queryMap, Dataset dataSet, MiPActionCommand actionCommand) throws QueryServiceException;
+	int update(Map<String, String> queryMap, Dataset dataSet, MiPActionCommand actionCommand) throws QueryException;
 
 	/**
 	 * This is the method for executing callablestatement without Dataset to the
@@ -274,10 +270,10 @@ public interface MiPQueryService {
 	 * @param queryId
 	 *            identifier of query statement to execute
 	 * @return Dataset of extracted out parameters
-	 * @throws QueryServiceException
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	DatasetList execute(String queryId) throws QueryServiceException;
+	DatasetList execute(String queryId) throws QueryException;
 
 	/**
 	 * This is the method for executing callablestatement using the Dataset to
@@ -285,12 +281,11 @@ public interface MiPQueryService {
 	 * 
 	 * @param queryId
 	 *            identifier of query statement to execute
-	 * @param datasetlist
+	 * @param dataset
 	 *            the DatasetList including the query conditions
 	 * @return Dataset of extracted out parameters
-	 * @throws QueryServiceException
+	 * @throws QueryException
 	 *             if there is any problem executing the query
 	 */
-	DatasetList execute(String queryId, Dataset dataset) throws QueryServiceException;
-
+	DatasetList execute(String queryId, Dataset dataset) throws QueryException;
 }
