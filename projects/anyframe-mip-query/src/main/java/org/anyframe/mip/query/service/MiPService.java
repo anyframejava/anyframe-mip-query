@@ -17,153 +17,148 @@ package org.anyframe.mip.query.service;
 
 import com.tobesoft.platform.data.DatasetList;
 import com.tobesoft.platform.data.VariableList;
-
 /**
- * This interface is a common biz. service in developing the presentation layer
- * using MiPlatform which is the X-Internet solution of the TOBE Software
- * company.
- * 
+ * This interface is a common biz. service in developing the
+ * presentation layer using MiPlatform which is the X-Internet solution of the
+ * TOBE Software company.
  * @author Jonghoon, Kim
- * 
+ *
  */
 public interface MiPService {
 
 	/**
-	 * This is the method for inquiring using VariableList and Dataset.
-	 * 
-	 * @param inVl
-	 *            VariableList including the query id or query condition etc.
+     * This is the method for inquiring using VariableList and Dataset.
+     * @param inVl
+	 * 		VariableList including the query id or query condition etc.
 	 * @param inDl
-	 *            The Dataset list including query conditions
+	 * 		The Dataset list including query conditions
 	 * @param outVl
-	 *            Output VaiableList including return values.
+	 * 		Output VaiableList including return values. 
 	 * @param outDl
-	 *            Output DatasetList including return values.
+	 * 		Output DatasetList including return values.
 	 * @throws Exception
-	 *             if there is any problem getting the DataSet
-	 */
+	 *		if there is any problem executing the
+	 *		query
+     */   
 	void get(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception;
-
 	/**
-	 * This is a method for querying at developing the screen using RIA
-	 * 
+	 * This is a method for querying at developing the
+     * screen using RIA
 	 * @param inVl
-	 *            VariableList including the query id or query condition etc.
+	 * 		VariableList including the query id or query condition etc.
 	 * @param inDl
-	 *            The Dataset list including query conditions
+	 * 		The Dataset list including query conditions
 	 * @param outVl
-	 *            Output VaiableList including return values.
+	 * 		Output VaiableList including return values. 
 	 * @param outDl
-	 *            Output DatasetList including return values.
+	 * 		Output DatasetList including return values.
 	 * @throws Exception
-	 *             if there is any problem getting the DataSet list
-	 */
+	 *		if there is any problem executing the
+	 *		query
+     */         
 	void getList(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception;
 
 	/**
-	 * This is a method for querying using the Dataset for paging.
-	 * 
-	 * @param inVl
-	 *            VariableList including the query id or query condition etc.
+     * This is a method for querying using the Dataset for paging.
+     * @param inVl
+	 * 		VariableList including the query id or query condition etc.
 	 * @param inDl
-	 *            The Dataset list including query conditions
+	 * 		The Dataset list including query conditions
 	 * @param outVl
-	 *            Output VaiableList including return values.
+	 * 		Output VaiableList including return values. 
 	 * @param outDl
-	 *            Output DatasetList including return values.
+	 * 		Output DatasetList including return values.
 	 * @throws Exception
-	 *             if there is any problem getting the DataSet list
-	 */
+	 *		if there is any problem executing the
+	 *		query
+     */       
 	void getPagingList(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception;
-
+	
 	/**
-	 * This is a method for querying using the Dataset for insert.
-	 * 
-	 * @param inVl
-	 *            VariableList including the query id or query condition etc.
+     * This is a method for querying using the Dataset for insert.
+     * @param inVl
+	 * 		VariableList including the query id or query condition etc.
 	 * @param inDl
-	 *            The Dataset list including query conditions
+	 * 		The Dataset list including query conditions
 	 * @param outVl
-	 *            Output VaiableList including return values.
+	 * 		Output VaiableList including return values. 
 	 * @param outDl
-	 *            Output DatasetList including return values.
+	 * 		Output DatasetList including return values.
 	 * @throws Exception
-	 *             if there is any problem inserting the data using DataSet
-	 */
+	 *		if there is any problem executing the
+	 *		query
+     */     
 	void create(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception;
-
+	
 	/**
-	 * This is the method for updating using VariableList and Dataset.
-	 * 
-	 * @param inVl
-	 *            VariableList including the query id or query condition etc.
+     * This is the method for updating using VariableList and Dataset.
+     * @param inVl
+	 * 		VariableList including the query id or query condition etc.
 	 * @param inDl
-	 *            The Dataset list including query conditions
+	 * 		The Dataset list including query conditions
 	 * @param outVl
-	 *            Output VaiableList including return values.
+	 * 		Output VaiableList including return values. 
 	 * @param outDl
-	 *            Output DatasetList including return values.
+	 * 		Output DatasetList including return values.
 	 * @throws Exception
-	 *             if there is any problem updating the data using DataSet
-	 */
+	 *		if there is any problem executing the
+	 *		query
+     */     
 	void update(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception;
-
+	
 	/**
-	 * This is the method for deleting using VariableList and Dataset.
-	 * 
-	 * @param inVl
-	 *            VariableList including the query id or query condition etc.
+     * This is the method for deleting using VariableList and Dataset.
+     * @param inVl
+	 * 		VariableList including the query id or query condition etc.
 	 * @param inDl
-	 *            The Dataset list including query conditions
+	 * 		The Dataset list including query conditions
 	 * @param outVl
-	 *            Output VaiableList including return values.
+	 * 		Output VaiableList including return values. 
 	 * @param outDl
-	 *            Output DatasetList including return values.
+	 * 		Output DatasetList including return values.
 	 * @throws Exception
-	 *             if there is any problem deleting the data using DataSet
-	 */
+	 *		if there is any problem executing the
+	 *		query
+     */     
 	void remove(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception;
 
 	/**
-	 * This is the method for inserting, updating and deleting using
-	 * VariableList and Dataset.
-	 * 
-	 * @param inVl
-	 *            VariableList including the query id or query condition etc.
+     * This is the method for inserting, updating and deleting using VariableList and Dataset.
+     * @param inVl
+	 * 		VariableList including the query id or query condition etc.
 	 * @param inDl
-	 *            The Dataset list including query conditions
+	 * 		The Dataset list including query conditions
 	 * @param outVl
-	 *            Output VaiableList including return values.
+	 * 		Output VaiableList including return values. 
 	 * @param outDl
-	 *            Output DatasetList including return values.
+	 * 		Output DatasetList including return values.
 	 * @throws Exception
-	 *             if there is any problem inserting, updating and deleting the
-	 *             data using DataSet
-	 */
+	 *		if there is any problem executing the
+	 *		query
+     */     
 	void saveAll(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception;
-
+	
 	/**
-	 * This is the method for executing function, procedure, or package using
-	 * VariableList and Dataset.
-	 * 
-	 * @param inVl
-	 *            VariableList including the query id or query condition etc.
+     * This is the method for executing function, procedure, or package using VariableList and Dataset.
+     * @param inVl
+	 * 		VariableList including the query id or query condition etc.
 	 * @param inDl
-	 *            The Dataset list including query conditions
+	 * 		The Dataset list including query conditions
 	 * @param outVl
-	 *            Output VaiableList including return values.
+	 * 		Output VaiableList including return values. 
 	 * @param outDl
-	 *            Output DatasetList including return values.
+	 * 		Output DatasetList including return values.
 	 * @throws Exception
-	 *             if there is any problem executing the procedure
-	 */
+	 *		if there is any problem executing the
+	 *		query
+     */     
 	void execute(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception;
 

@@ -22,10 +22,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * @author Warren Mayocchi
- * 
- * @author modified by SoYon Lim
- * @author modified by JongHoon Kim
+ * @author SoYon Lim
+ * @author JongHoon Kim
  */
 public class ReflectionHelp {
 
@@ -35,7 +33,7 @@ public class ReflectionHelp {
 	 * 
 	 * @param target
 	 *            The class to examine.
-	 * @return Array of fields. 
+	 * @return Array of fields.
 	 */
 	public static Field[] getAllDeclaredFields(Class<?> target) {
 		// Recursing
@@ -62,7 +60,8 @@ public class ReflectionHelp {
 	public static List<Field> getFields(Object bean) {
 		Field[] fields = getAllDeclaredFields(bean.getClass());
 		AccessibleObject.setAccessible(fields, true);
-		return Arrays.asList(fields);
+		List<Field> fieldList = Arrays.asList(fields);
+		return fieldList;
 	}
 
 	/**

@@ -13,9 +13,6 @@
            		<imagedata align="center"
 					fileref="../image/mip-query/mipuisample/editing_domain.png" />
           	</imageobject>
-			<textobject>
-				<phrase>MiPlatform PID의 Global 탭</phrase>
-			</textobject>
         </mediaobject>
         <para></para>
         <para>
@@ -27,9 +24,6 @@
            		<imagedata align="center"
 					fileref="../image/mip-query/mipuisample/domainid_prop.png" />
           	</imageobject>
-          	<textobject>
-				<phrase>다국어 등록 화면</phrase>
-			</textobject>
         </mediaobject>
         <para></para>
         <para>

@@ -27,14 +27,15 @@ import com.tobesoft.platform.data.VariableList;
  */
 public class MiPVariantSqlParameterSource extends DefaultDynamicSqlParameterSource {
 
-    private final VariableList variant;
+    private VariableList variant;
 
-    public MiPVariantSqlParameterSource(VariableList variant) { 
+    public MiPVariantSqlParameterSource(VariableList variant) {
         this.variant = variant;
     }
 
     public Object getValue(String arg0) {
-        return variant.getValueAsObject(arg0);
+        Object value = variant.getValueAsObject(arg0);
+        return value;
     }
 
     public boolean hasValue(String arg0) {

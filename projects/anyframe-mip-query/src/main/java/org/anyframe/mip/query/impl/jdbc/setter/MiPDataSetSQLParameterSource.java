@@ -27,9 +27,9 @@ import com.tobesoft.platform.data.Dataset;
 public class MiPDataSetSQLParameterSource extends
 		DefaultDynamicSqlParameterSource {
 
-	private final Dataset dataset;
-	private final int rowNum;
-	private final ColumnValueExtractor columnValueExtractor; 
+	private Dataset dataset;
+	private int rowNum;
+	private ColumnValueExtractor columnValueExtractor;
 
 	public MiPDataSetSQLParameterSource(Dataset dataset, int rowNum,
 			ColumnValueExtractor columnValueExtractor) {

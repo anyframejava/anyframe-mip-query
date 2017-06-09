@@ -11,24 +11,24 @@
 	</parent>
 	<groupId>org.anyframe</groupId>
 	<artifactId>anyframe-mip-query</artifactId>
-	<version>1.5.0</version>	
+	<version>1.5.0.RC1</version>	
 	<packaging>jar</packaging>			
 
 	<dependencies>
 		<dependency>
 			<groupId>org.anyframe</groupId>
 			<artifactId>anyframe-core</artifactId>
-			<version>1.5.0</version>
+			<version>1.5.0.RC1</version>
 		</dependency>	
 		<dependency>
 			<groupId>org.anyframe</groupId>
 			<artifactId>anyframe-query</artifactId>
-			<version>1.5.0</version>
+			<version>1.5.0.RC1</version>
 		</dependency>	
 		<dependency>
 			<groupId>org.anyframe</groupId>
 			<artifactId>anyframe-query-ria</artifactId>
-			<version>1.5.0</version>
+			<version>1.5.0.RC1</version>
 		</dependency>
 		<dependency>
 			<groupId>cglib</groupId>
@@ -144,7 +144,7 @@
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
+			<version>1.2.15</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
