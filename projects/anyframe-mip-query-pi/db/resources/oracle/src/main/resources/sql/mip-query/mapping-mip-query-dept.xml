@@ -9,5 +9,5 @@
 			#end
 			<!--Velocity-Support-findDeptList-END-->
 			ORDER BY DEPT_ID		
-		<!--mip-query-findDeptList-START-->
+		<!--mip-query-findDeptList-END-->
 		

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import org.anyframe.query.QueryInfo;
-import org.anyframe.query.impl.Pagination;
 import org.anyframe.query.ria.RiaRowCallback;
 
 import com.tobesoft.platform.data.ColumnInfo;
@@ -28,6 +27,8 @@ import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.Variant;
 
 /**
+ * DataSet Callback Handler Class
+ * 
  * @author Soyon Lim
  */
 public class MiPDataSetCallbackHandler extends MiPCallbackSupport

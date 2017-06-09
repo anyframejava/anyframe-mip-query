@@ -24,12 +24,19 @@ import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
+
+import junit.framework.Assert;
 
 import org.anyframe.mip.query.MiPQueryService;
 import org.anyframe.query.QueryServiceException;
 import org.anyframe.util.DateUtil;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.FileCopyUtils;
 
 import com.tobesoft.platform.data.Dataset;
@@ -38,234 +45,229 @@ import com.tobesoft.platform.data.Variant;
 /**
  * @author JongHoon Kim
  */
-public class MiPQueryServiceBlobClobTest extends
-        AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:/spring/context-*.xml" })
+public class MiPQueryServiceBlobClobTest {
 
-    private DataSource dataSource;
-    private MiPQueryService mipQueryService;
+	@Inject
+	private DataSource dataSource;
 
-    protected String[] getConfigLocations() {
-        return new String[] {"classpath:/spring/context-*.xml" };
-    }
+	@Inject
+	private MiPQueryService mipQueryService;
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+	@Before
+	public void onSetUp() throws Exception {
+		try {
+			Connection conn = dataSource.getConnection();
+			try {
+				Statement statement = conn.createStatement();
 
-    public void setMipQueryService(MiPQueryService mipQueryService) {
-        this.mipQueryService = mipQueryService;
-    }
+				try {
+					statement.executeUpdate("DROP TABLE TB_MIP_BLOBCLOB");
+				} catch (SQLException e) {
+					System.out.println("Fail to DROP Table.");
+				}
 
-    public void onSetUp() throws Exception {
-        super.onSetUp();
-        try {
-            Connection conn = dataSource.getConnection();
-            try {
-                Statement statement = conn.createStatement();
+				statement.executeUpdate("CREATE TABLE TB_MIP_BLOBCLOB ( "
+						+ "TEST_CHAR CHAR(10)," + "TEST_BLOB BLOB, "
+						+ "TEST_CLOB CLOB," + "TEST_DATE DATE" + ")");
+			} finally {
+				conn.close();
+			}
+		} catch (SQLException e) {
+			System.err.println("Unable to initialize database for test." + e);
+			Assert.fail("Unable to initialize database for test. " + e);
+		}
+	}
 
-                try {
-                    statement.executeUpdate("DROP TABLE TB_MIP_BLOBCLOB");
-                } catch (SQLException e) {
-                    System.out.println("Fail to DROP Table.");
-                }
+	@Test
+	public void testInsertBlobClob() throws QueryServiceException {
+		Map<String, String> queryMap = new HashMap<String, String>();
+		queryMap.put(MiPQueryService.QUERY_INSERT, "createBlobClob");
+		int resultCount = mipQueryService.update(queryMap,
+				makeInsertLobDataSet());
+		Assert.assertEquals(2, resultCount);
+	}
 
-                statement.executeUpdate("CREATE TABLE TB_MIP_BLOBCLOB ( "
-                    + "TEST_CHAR CHAR(10)," + "TEST_BLOB BLOB, "
-                    + "TEST_CLOB CLOB," + "TEST_DATE DATE" + ")");
-            } finally {
-                conn.close();
-            }
-        } catch (SQLException e) {
-            System.err.println("Unable to initialize database for test." + e);
-            fail("Unable to initialize database for test. " + e);
-        }
-    }
+	@Test
+	public void testUpdateBlobClob() throws Exception {
+		// Data initialization
+		try {
+			Map<String, String> sqlMap = new HashMap<String, String>();
+			sqlMap.put(MiPQueryService.QUERY_INSERT, "createBlobClob");
+			mipQueryService.update(sqlMap, makeInsertLobDataSet());
+		} catch (Exception e) {
+			throw new Exception(
+					"An Exception has occurred while initializing Test Update Data",
+					e);
+		}
+		// Test Update
+		Map<String, String> sqlMap = new HashMap<String, String>();
+		sqlMap.put(MiPQueryService.QUERY_UPDATE, "updateBlobClob");
+		int resultCount = mipQueryService
+				.update(sqlMap, makeUpdateLobDataSet());
+		Assert.assertEquals(1, resultCount);
 
-    public void testInsertBlobClob() throws QueryServiceException {
-        Map queryMap = new HashMap();
-        queryMap.put(MiPQueryService.QUERY_INSERT, "createBlobClob");
-        int resultCount =
-            mipQueryService.update(queryMap, makeInsertLobDataSet());
-        assertEquals(2, resultCount);
-    }
+	}
 
-    public void testUpdateBlobClob() throws Exception {
-        // Data initialization
-        try {
-            Map sqlMap = new HashMap();
-            sqlMap.put(MiPQueryService.QUERY_INSERT, "createBlobClob");
-            mipQueryService.update(sqlMap, makeInsertLobDataSet());
-        } catch (Exception e) {
-            throw new Exception(
-                "An Exception has occurred while initializing Test Update Data",
-                e);
-        }
-        // Test Update
-        Map sqlMap = new HashMap();
-        sqlMap.put(MiPQueryService.QUERY_UPDATE, "updateBlobClob");
-        int resultCount =
-            mipQueryService.update(sqlMap, makeUpdateLobDataSet());
-        assertEquals(1, resultCount);
+	@Test
+	public void testFindBlobClob() throws Exception {
+		try {
+			Map<String, String> sqlMap = new HashMap<String, String>();
+			sqlMap.put(MiPQueryService.QUERY_INSERT, "createBlobClob");
+			mipQueryService.update(sqlMap, makeInsertLobDataSet());
+		} catch (Exception e) {
+			throw new Exception(
+					"An Exception has occurred while initializing Test Update Data",
+					e);
+		}
+		// Test Select
+		Dataset resultDs = mipQueryService.search("findBlobClob",
+				makeFindDataSet());
+		Assert.assertEquals(2, resultDs.getRowCount());
+		Assert.assertEquals(makeInsertBlobData().length, resultDs
+				.getColumnAsByteArray(0, 1).length);
+		Assert.assertEquals(makeInsertBlobData().length, resultDs
+				.getColumnAsByteArray(1, 1).length);
+		Assert.assertNotNull(resultDs.getColumnAsObject(0, 2));
+		Assert.assertNotNull(resultDs.getColumnAsObject(1, 2));
+	}
 
-    }
+	private Dataset makeInsertLobDataSet() {
+		Dataset insertDataSet = new Dataset();
+		insertDataSet.setUpdate(true);
+		insertDataSet.setDataSetID("bbnydory_insert");
+		insertDataSet.addStringColumn("TEST_CHAR");
+		insertDataSet.addBlobColumn("TEST_BLOB");
+		insertDataSet.addStringColumn("TEST_CLOB");
+		insertDataSet.addDateColumn("TEST_DATE");
 
-    public void testFindBlobClob() throws Exception {
-        try {
-            Map sqlMap = new HashMap();
-            sqlMap.put(MiPQueryService.QUERY_INSERT, "createBlobClob");
-            mipQueryService.update(sqlMap, makeInsertLobDataSet());
-        } catch (Exception e) {
-            throw new Exception(
-                "An Exception has occurred while initializing Test Update Data",
-                e);
-        }
-        // Test Select
-        Dataset resultDs =
-            mipQueryService.search("findBlobClob", makeFindDataSet());
-        assertEquals(2, resultDs.getRowCount());
-        assertEquals(makeInsertBlobData().length, resultDs
-            .getColumnAsByteArray(0, 1).length);
-        assertEquals(makeInsertBlobData().length, resultDs
-            .getColumnAsByteArray(1, 1).length);
-        assertNotNull(resultDs.getColumnAsObject(0, 2));
-        assertNotNull(resultDs.getColumnAsObject(1, 2));
-    }
+		insertDataSet.appendRow();
+		Variant variant = new Variant();
+		variant.setObject("bbnydory00");
+		insertDataSet.setColumn(0, "TEST_CHAR", variant);
+		variant = new Variant();
+		variant.setObject(makeInsertBlobData());
+		insertDataSet.setColumn(0, "TEST_BLOB", variant);
+		variant = new Variant();
+		variant.setString(makeInsertClobData());
+		insertDataSet.setColumn(0, "TEST_CLOB", variant);
+		variant = new Variant();
+		variant.setDate(getDate());
+		insertDataSet.setColumn(0, "TEST_DATE", variant);
+		insertDataSet.appendRow();
 
-    private Dataset makeInsertLobDataSet() {
-        Dataset insertDataSet = new Dataset();
-        insertDataSet.setUpdate(true);
-        insertDataSet.setDataSetID("bbnydory_insert");
-        insertDataSet.addStringColumn("TEST_CHAR");
-        insertDataSet.addBlobColumn("TEST_BLOB");
-        insertDataSet.addStringColumn("TEST_CLOB");
-        insertDataSet.addDateColumn("TEST_DATE");
+		variant = new Variant();
+		variant.setObject("bbnydory01");
+		insertDataSet.setColumn(1, "TEST_CHAR", variant);
+		variant = new Variant();
+		variant.setObject(makeInsertBlobData());
+		insertDataSet.setColumn(1, "TEST_BLOB", variant);
+		variant = new Variant();
+		variant.setString(makeInsertClobData());
+		insertDataSet.setColumn(1, "TEST_CLOB", variant);
+		variant = new Variant();
+		variant.setDate(getDate());
+		insertDataSet.setColumn(1, "TEST_DATE", variant);
+		return insertDataSet;
+	}
 
-        insertDataSet.appendRow();
-        Variant variant = new Variant();
-        variant.setObject("bbnydory00");
-        insertDataSet.setColumn(0, "TEST_CHAR", variant);
-        variant = new Variant();
-        variant.setObject(makeInsertBlobData());
-        insertDataSet.setColumn(0, "TEST_BLOB", variant);
-        variant = new Variant();
-        variant.setString(makeInsertClobData());
-        insertDataSet.setColumn(0, "TEST_CLOB", variant);
-        variant = new Variant();
-        variant.setDate(getDate());
-        insertDataSet.setColumn(0, "TEST_DATE", variant);
-        insertDataSet.appendRow();
+	private Dataset makeUpdateLobDataSet() {
+		Dataset updateDataSet = new Dataset();
 
-        variant = new Variant();
-        variant.setObject("bbnydory01");
-        insertDataSet.setColumn(1, "TEST_CHAR", variant);
-        variant = new Variant();
-        variant.setObject(makeInsertBlobData());
-        insertDataSet.setColumn(1, "TEST_BLOB", variant);
-        variant = new Variant();
-        variant.setString(makeInsertClobData());
-        insertDataSet.setColumn(1, "TEST_CLOB", variant);
-        variant = new Variant();
-        variant.setDate(getDate());
-        insertDataSet.setColumn(1, "TEST_DATE", variant);
-        return insertDataSet;
-    }
+		updateDataSet.setDataSetID("bbnydory_update");
+		updateDataSet.addStringColumn("TEST_CHAR");
+		updateDataSet.addBlobColumn("TEST_BLOB");
+		updateDataSet.addStringColumn("TEST_CLOB");
+		updateDataSet.addDateColumn("TEST_DATE");
 
-    private Dataset makeUpdateLobDataSet() {
-        Dataset updateDataSet = new Dataset();
+		updateDataSet.appendRow();
+		updateDataSet.setUpdate(true);
+		Variant variant = new Variant();
+		variant.setObject("bbnydory00");
+		updateDataSet.setColumn(0, "TEST_CHAR", variant);
+		variant = new Variant();
+		variant.setObject(makeUpdateBlobData());
+		updateDataSet.setColumn(0, "TEST_BLOB", variant);
+		variant = new Variant();
+		variant.setString(makeUpdateClobData());
+		updateDataSet.setColumn(0, "TEST_CLOB", variant);
+		variant = new Variant();
+		variant.setDate(getDate());
+		updateDataSet.setColumn(0, "TEST_DATE", variant);
+		updateDataSet.dump();
+		return updateDataSet;
+	}
 
-        updateDataSet.setDataSetID("bbnydory_update");
-        updateDataSet.addStringColumn("TEST_CHAR");
-        updateDataSet.addBlobColumn("TEST_BLOB");
-        updateDataSet.addStringColumn("TEST_CLOB");
-        updateDataSet.addDateColumn("TEST_DATE");
+	private Dataset makeFindDataSet() {
+		Dataset selectDs = new Dataset();
+		selectDs.setDataSetID("bbnydory_select");
+		selectDs.addStringColumn("SEARCH_KEYWORD");
 
-        updateDataSet.appendRow();
-        updateDataSet.setUpdate(true);
-        Variant variant = new Variant();
-        variant.setObject("bbnydory00");
-        updateDataSet.setColumn(0, "TEST_CHAR", variant);
-        variant = new Variant();
-        variant.setObject(makeUpdateBlobData());
-        updateDataSet.setColumn(0, "TEST_BLOB", variant);
-        variant = new Variant();
-        variant.setString(makeUpdateClobData());
-        updateDataSet.setColumn(0, "TEST_CLOB", variant);
-        variant = new Variant();
-        variant.setDate(getDate());
-        updateDataSet.setColumn(0, "TEST_DATE", variant);
-        updateDataSet.dump();
-        return updateDataSet;
-    }
+		selectDs.appendRow();
+		Variant variant = new Variant();
+		variant.setObject("%bbnydory%");
+		selectDs.setColumn(0, "SEARCH_KEYWORD", variant);
+		return selectDs;
+	}
 
-    private Dataset makeFindDataSet() {
-        Dataset selectDs = new Dataset();
-        selectDs.setDataSetID("bbnydory_select");
-        selectDs.addStringColumn("SEARCH_KEYWORD");
+	private byte[] makeInsertBlobData() {
+		FileInputStream fis = null;
+		byte[] blobByte = null;
+		try {
+			fis = new FileInputStream("./testlobdata/CreateLobTest.txt");
+			blobByte = FileCopyUtils.copyToByteArray(fis);
+		} catch (IOException e) {
+			Assert.fail("Fail to read file");
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return blobByte;
+	}
 
-        selectDs.appendRow();
-        Variant variant = new Variant();
-        variant.setObject("%bbnydory%");
-        selectDs.setColumn(0, "SEARCH_KEYWORD", variant);
-        return selectDs;
-    }
+	private byte[] makeUpdateBlobData() {
+		FileInputStream fis = null;
+		byte[] blobByte = null;
+		try {
+			fis = new FileInputStream("./testlobdata/UpdateLobTest.txt");
+			blobByte = FileCopyUtils.copyToByteArray(fis);
+		} catch (IOException e) {
+			Assert.fail("Fail to read file");
+		} finally {
+			if (fis != null) {
+				try {
+					fis.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return blobByte;
+	}
 
-    private byte[] makeInsertBlobData() {
-        FileInputStream fis = null;
-        byte[] blobByte = null;
-        try {
-            fis = new FileInputStream("./testlobdata/CreateLobTest.txt");
-            blobByte = FileCopyUtils.copyToByteArray(fis);
-        } catch (IOException e) {
-            fail("Fail to read file");
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return blobByte;
-    }
+	private String makeInsertClobData() {
+		String clobData = "Anyframe MiQueryService Test.\n";
+		for (int i = 0; i < 100; i++) {
+			clobData += "Anyframe MiQueryService Test.\n";
+		}
+		return clobData;
+	}
 
-    private byte[] makeUpdateBlobData() {
-        FileInputStream fis = null;
-        byte[] blobByte = null;
-        try {
-            fis = new FileInputStream("./testlobdata/UpdateLobTest.txt");
-            blobByte = FileCopyUtils.copyToByteArray(fis);
-        } catch (IOException e) {
-            fail("Fail to read file");
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return blobByte;
-    }
+	private String makeUpdateClobData() {
+		String clobData = "Anyframe MiQueryService Update Test.\n";
+		for (int i = 0; i < 100; i++) {
+			clobData += "Anyframe MiQueryService Update Test.\n";
+		}
+		return clobData;
+	}
 
-    private String makeInsertClobData() {
-        String clobData = "Anyframe MiQueryService Test.\n";
-        for (int i = 0; i < 100; i++) {
-            clobData += "Anyframe MiQueryService Test.\n";
-        }
-        return clobData;
-    }
-
-    private String makeUpdateClobData() {
-        String clobData = "Anyframe MiQueryService Update Test.\n";
-        for (int i = 0; i < 100; i++) {
-            clobData += "Anyframe MiQueryService Update Test.\n";
-        }
-        return clobData;
-    }
-
-    private Timestamp getDate() {
-        return DateUtil.string2Timestamp("2008-12-01", "yyyy-MM-dd");
-    }
+	private Timestamp getDate() {
+		return DateUtil.string2Timestamp("2008-12-01", "yyyy-MM-dd");
+	}
 }

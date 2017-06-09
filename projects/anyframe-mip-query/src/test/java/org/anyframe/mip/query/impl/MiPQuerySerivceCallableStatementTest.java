@@ -19,11 +19,19 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import org.anyframe.mip.query.MiPQueryService;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import junit.framework.Assert;
 
+import org.anyframe.mip.query.MiPQueryService;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.tobesoft.platform.data.ColumnInfo;
 import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.DatasetList;
 import com.tobesoft.platform.data.Variant;
@@ -48,30 +56,22 @@ import com.tobesoft.platform.data.Variant;
  * 
  * @author Jonghoon Kim
  */
-public class MiPQuerySerivceCallableStatementTest extends
-		AbstractDependencyInjectionSpringContextTests {
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:/spring/context-*.xml" })
+public class MiPQuerySerivceCallableStatementTest {
+
+	@Inject
 	private MiPQueryService mipQueryService;
 
-	public void setMipQueryService(MiPQueryService mipQueryService) {
-		this.mipQueryService = mipQueryService;
-	}
-
+	@Inject
 	private DataSource dataSource = null;
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-	protected String[] getConfigLocations() {
-		setAutowireMode(AbstractDependencyInjectionSpringContextTests.AUTOWIRE_BY_NAME);
-		return new String[] { "classpath:/spring/context-*.xml" };
-	}
 
 	/**
 	 * Function FUNC_RETURN_NUM, Procedure PROC_TOCHAR_SYSDATE, PACKAGE
 	 * PKG_REFCURSOR_TEST is created for test.
 	 */
+	@Before
 	public void onSetUp() throws Exception {
 		Connection conn = null;
 		Statement statement = null;
@@ -101,12 +101,10 @@ public class MiPQuerySerivceCallableStatementTest extends
 			}
 
 			// 4. create function for test
-			statement
-					.executeUpdate("create FUNCTION FUNC_RETURN_NUM (v_in1 IN number) RETURN number IS BEGIN return 1; END;");
+			statement.executeUpdate("create FUNCTION FUNC_RETURN_NUM (v_in1 IN number) RETURN number IS BEGIN return 1; END;");
 
 			// 5. create procedure for test
-			statement
-					.executeUpdate("CREATE OR REPLACE PROCEDURE PROC_TOCHAR ( "
+			statement.executeUpdate("CREATE OR REPLACE PROCEDURE PROC_TOCHAR ( "
 							+ " OUT_RESULT OUT VARCHAR2, "
 							+ " IN_CONDITION IN VARCHAR2 "
 							+ " ) "
@@ -156,7 +154,7 @@ public class MiPQuerySerivceCallableStatementTest extends
 			statement.executeUpdate(sql.toString());
 		} catch (SQLException e) {
 			System.err.println("Unable to initialize database for test." + e);
-			fail("Unable to initialize database for test. " + e);
+			Assert.fail("Unable to initialize database for test. " + e);
 		} finally {
 			if (statement != null)
 				statement.close();
@@ -174,6 +172,7 @@ public class MiPQuerySerivceCallableStatementTest extends
 	 * @throws Exception
 	 *             throws exception which is from QueryService
 	 */
+	@Test
 	public void testFunction() throws Exception {
 		// 1. set data for test
 
@@ -185,7 +184,7 @@ public class MiPQuerySerivceCallableStatementTest extends
 		Variant variant1 = new Variant();
 		variant1.setObject("1");
 		inDs.setColumn(0, "inVal", variant1);
-		
+
 		inDs.appendRow();
 		Variant variant2 = new Variant();
 		variant2.setObject("1");
@@ -193,14 +192,12 @@ public class MiPQuerySerivceCallableStatementTest extends
 
 		DatasetList outDl = mipQueryService.execute("callFunction", inDs);
 		Dataset outDs = outDl.get("callFunction0");
-		
+
 		// 3 assert
-		assertTrue("Fail to execute function.", outDs.getRowCount() == 1);
-		assertEquals("Fail to compare class type of outVal.", outDs
-				.getColumnInfo(0).CY_COLINFO_DECIMAL, outDs.getColumnInfo(0)
-				.getColumnType());
-		assertTrue("Fail to execute function.", outDs.getColumnAsDouble(0,
-				"outVal").doubleValue() == 1.0);
+		Assert.assertTrue("Fail to execute function.", outDs.getRowCount() == 1);
+//		Assert.assertEquals("Fail to compare class type of outVal.", outDs.getColumnInfo(0).CY_COLINFO_DECIMAL, outDs.getColumnInfo(0).getColumnType());
+		Assert.assertEquals("Fail to compare class type of outVal.", ColumnInfo.COLTYPE_DECIMAL, outDs.getColumnInfo(0).getColumnType());
+		Assert.assertTrue("Fail to execute function.", outDs.getColumnAsDouble(0, "outVal").doubleValue() == 1.0);
 	}
 
 	/**
@@ -212,6 +209,7 @@ public class MiPQuerySerivceCallableStatementTest extends
 	 * @throws Exception
 	 *             throws exception which is from QueryService
 	 */
+	@Test
 	public void testProcedure() throws Exception {
 		// 1. set data for test
 		Dataset inDs = new Dataset();
@@ -226,14 +224,12 @@ public class MiPQuerySerivceCallableStatementTest extends
 		// 2. execute query
 		DatasetList outDl = mipQueryService.execute("callProcedure", inDs);
 		Dataset outDs = outDl.get("callProcedure0");
-		
-		// 3. assert
-		assertTrue("Fail to execute function.", outDs.getRowCount() == 1);
-		assertEquals("Fail to compare class type of outVal.", "STRING", outDs
-				.getColumnInfo(0).getColumnTypeStr());
 
-		assertEquals("Anyframe MiPQueryService Procedure Test", outDs
-				.getColumnAsString(0, "outVal"));
+		// 3. assert
+		Assert.assertTrue("Fail to execute function.", outDs.getRowCount() == 1);
+		Assert.assertEquals("Fail to compare class type of outVal.", "STRING", outDs.getColumnInfo(0).getColumnTypeStr());
+
+		Assert.assertEquals("Anyframe MiPQueryService Procedure Test", outDs.getColumnAsString(0, "outVal"));
 	}
 
 	/**
@@ -245,6 +241,7 @@ public class MiPQuerySerivceCallableStatementTest extends
 	 * @throws Exception
 	 *             throws exception which is from QueryService
 	 */
+	@Test
 	public void testPackage() throws Exception {
 		// 1. set data for test
 		Dataset inDs = new Dataset();
@@ -255,45 +252,38 @@ public class MiPQuerySerivceCallableStatementTest extends
 		Variant variant1 = new Variant();
 		variant1.setString("KKN");
 		inDs.setColumn(0, "inVal", variant1);
-		
+
 		inDs.appendRow();
 		Variant variant2 = new Variant();
 		variant2.setString(null);
 		inDs.setColumn(1, "inVal", variant2);
-		
 
 		// 2. execute query
 		DatasetList outDl = mipQueryService.execute("callPackage", inDs);
-		
+
 		Dataset outDs1 = outDl.get("callPackage0");
 		Dataset outDs2 = outDl.get("callPackage1");
 
 		// 3. assert
-		assertEquals("Fail to compare result size.", 3, outDs1.getRowCount());
-		assertEquals("Fail to compare result size.", 1, outDs2.getRowCount());
-		
+		Assert.assertEquals("Fail to compare result size.", 3, outDs1.getRowCount());
+		Assert.assertEquals("Fail to compare result size.", 1, outDs2.getRowCount());
+
 		// 4. assert in detail
 		for (int i = 0; i < outDs1.getRowCount(); i++) {
 
-			assertEquals("Fail to compare a value of NAME column.", "KKN",
-					outDs1.getColumnAsString(i, "NAME"));
+			Assert.assertEquals("Fail to compare a value of NAME column.", "KKN", outDs1.getColumnAsString(i, "NAME"));
 			if (i == 0)
-				assertEquals("Fail to compare a value of STATUS column.",
-						"ACTIVE", outDs1.getColumnAsString(i, "STATUS"));
+				Assert.assertEquals("Fail to compare a value of STATUS column.", "ACTIVE", outDs1.getColumnAsString(i, "STATUS"));
 			else if (i == 1)
-				assertEquals("Fail to compare a value of STATUS column.",
-						"READY", outDs1.getColumnAsString(i, "STATUS"));
+				Assert.assertEquals("Fail to compare a value of STATUS column.", "READY", outDs1.getColumnAsString(i, "STATUS"));
 			else if (i == 2)
-				assertEquals("Fail to compare a value of STATUS column.",
-						"BLOCK", outDs1.getColumnAsString(i, "STATUS"));
+				Assert.assertEquals("Fail to compare a value of STATUS column.", "BLOCK", outDs1.getColumnAsString(i, "STATUS"));
 		}
-		
+
 		for (int i = 0; i < outDs2.getRowCount(); i++) {
 
-			assertEquals("Fail to compare a value of NAME column.", "N/A",
-					outDs2.getColumnAsString(i, "NAME"));
-			assertEquals("Fail to compare a value of STATUS column.", "BLOCK",
-					outDs2.getColumnAsString(i, "STATUS"));
+			Assert.assertEquals("Fail to compare a value of NAME column.", "N/A", outDs2.getColumnAsString(i, "NAME"));
+			Assert.assertEquals("Fail to compare a value of STATUS column.", "BLOCK", outDs2.getColumnAsString(i, "STATUS"));
 		}
 	}
 }

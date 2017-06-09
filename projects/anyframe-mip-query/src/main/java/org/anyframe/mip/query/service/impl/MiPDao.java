@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2009 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,293 +26,308 @@ import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.DatasetList;
 import com.tobesoft.platform.data.VariableList;
 
-public class MiPDao{
+/**
+ * This class provides methods to send pre-defined queries to Database.
+ * 
+ * @author Soyon Lim
+ * @author JongHoon Kim
+ */
+public class MiPDao {
 
 	public final short TYPE_NORMAL = 1;
 	public final short TYPE_INSERT = 2;
 	public final short TYPE_UPDATE = 4;
 	public final short TYPE_DELETE = 8;
-	
+
 	private MiPQueryService miPQueryService;
-	
+
 	public MiPDao(MiPQueryService miPQueryService) {
 		this.miPQueryService = miPQueryService;
 	}
 
 	/**
-     * This is the method for selecting using primary key(String).
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param primaryKey
-     * 		privary key value
+	 * This is the method for selecting using primary key(String).
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param primaryKey
+	 *            privary key value
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
+	 *             if there is any problem executing the query
+	 */
 	public Dataset get(String queryId, String primaryKey) throws Exception {
 		VariableList inVl = new VariableList();
 		inVl.add("primaryKey", primaryKey);
 		return miPQueryService.search(queryId, inVl);
 	}
-	
+
 	/**
-     * This is the method for selecting using VariableList.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inVl
-     * 		VariableList contains key word to search.
+	 * This is the method for selecting using VariableList.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inVl
+	 *            VariableList contains key word to search.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
+	 *             if there is any problem executing the query
+	 */
 	public Dataset get(String queryId, VariableList inVl) throws Exception {
 		return miPQueryService.search(queryId, inVl);
 	}
 
 	/**
-     * This is the method for selecting using Dataset.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inDs
-     * 		Dataset contains key word to search.
+	 * This is the method for selecting using Dataset.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inDs
+	 *            Dataset contains key word to search.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */ 
+	 *             if there is any problem executing the query
+	 */
 	public Dataset getList(String queryId, Dataset inDs) throws Exception {
 		return miPQueryService.search(queryId, inDs);
 	}
 
 	/**
-     * This is the method for selecting using VariableList.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inVl
-     * 		VariableList contains key word to search.
+	 * This is the method for selecting using VariableList.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inVl
+	 *            VariableList contains key word to search.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
+	 *             if there is any problem executing the query
+	 */
 	public Dataset getList(String queryId, VariableList inVl) throws Exception {
 		return miPQueryService.search(queryId, inVl);
 	}
 
 	/**
-     * This is the method for selecting using Dataset.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inDs
-     * 		Dataset contains key word to search and pageIndex, pageUnit.
+	 * This is the method for selecting using Dataset.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inDs
+	 *            Dataset contains key word to search and pageIndex, pageUnit.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
+	 *             if there is any problem executing the query
+	 */
 	public Dataset getPagingList(String queryId, Dataset inDs) throws Exception {
 		return miPQueryService.searchWithPaging(queryId, inDs);
 	}
 
 	/**
-     * This is the method for inserting using VariableList.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inVl
-     * 		VariableList contains record to insert.
+	 * This is the method for inserting using VariableList.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inVl
+	 *            VariableList contains record to insert.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
+	 *             if there is any problem executing the query
+	 */
 	public int create(String queryId, VariableList inVl) throws Exception {
 		return miPQueryService.update(queryId, inVl);
 	}
 
 	/**
-     * This is the method for inserting using Dataset.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inDs
-     * 		Dataset contains records to insert.
+	 * This is the method for inserting using Dataset.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inDs
+	 *            Dataset contains records to insert.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
+	 *             if there is any problem executing the query
+	 */
 	public int create(String queryId, Dataset inDs) throws Exception {
 		return create(queryId, inDs, null);
 	}
 
 	/**
-     * This is the method for inserting using Dataset.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inDs
-     * 		Dataset contains records to insert.
-     * @param actionCommand
-     * 		IMiPActionCommand contains biz. logic pre or post insert. 
+	 * This is the method for inserting using Dataset.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inDs
+	 *            Dataset contains records to insert.
+	 * @param actionCommand
+	 *            IMiPActionCommand contains biz. logic pre or post insert.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
-	public int create(String queryId, Dataset inDs,
-			MiPActionCommand actionCommand) throws Exception {
+	 *             if there is any problem executing the query
+	 */
+	@SuppressWarnings("unchecked")
+	public int create(String queryId, Dataset inDs, MiPActionCommand actionCommand) throws Exception {
 		Map queryMap = new HashMap();
-		setDatasetStatus(TYPE_INSERT, inDs );
+		setDatasetStatus(TYPE_INSERT, inDs);
 		queryMap.put(MiPQueryService.QUERY_INSERT, queryId);
-		return saveAll( queryMap, inDs , actionCommand);
+		return saveAll(queryMap, inDs, actionCommand);
 	}
 
 	/**
-     * This is the method for removing using VariableList.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inVl
-     * 		VariableList contains record to remove.
+	 * This is the method for removing using VariableList.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inVl
+	 *            VariableList contains record to remove.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */ 
+	 *             if there is any problem executing the query
+	 */
 	public int remove(String queryId, VariableList inVl) throws Exception {
 		return miPQueryService.update(queryId, inVl);
 	}
 
 	/**
-     * This is the method for removing using Dataset.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inDs
-     * 		Dataset contains records to remove.
+	 * This is the method for removing using Dataset.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inDs
+	 *            Dataset contains records to remove.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */
+	 *             if there is any problem executing the query
+	 */
 	public int remove(String queryId, Dataset inDs) throws Exception {
 		return remove(queryId, inDs, null);
 	}
 
 	/**
-     * This is the method for removing using Dataset.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inDs
-     * 		Dataset contains records to remove.
-     * @param actionCommand
-     * 		IMiPActionCommand contains biz. logic pre or post remove. 
+	 * This is the method for removing using Dataset.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inDs
+	 *            Dataset contains records to remove.
+	 * @param actionCommand
+	 *            IMiPActionCommand contains biz. logic pre or post remove.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
-	public int remove(String queryId, Dataset inDs,
-			MiPActionCommand actionCommand) throws Exception {
+	 *             if there is any problem executing the query
+	 */
+	@SuppressWarnings("unchecked")
+	public int remove(String queryId, Dataset inDs, MiPActionCommand actionCommand) throws Exception {
 		Map queryMap = new HashMap();
-		setDatasetStatus(TYPE_DELETE, inDs );
+		setDatasetStatus(TYPE_DELETE, inDs);
 		queryMap.put(MiPQueryService.QUERY_DELETE, queryId);
-		return saveAll( queryMap, inDs , actionCommand);
+		return saveAll(queryMap, inDs, actionCommand);
 	}
 
 	/**
-     * This is the method for updating using VariableList.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inVl
-     * 		VariableList contains record to update.
+	 * This is the method for updating using VariableList.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inVl
+	 *            VariableList contains record to update.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
+	 *             if there is any problem executing the query
+	 */
 	public int update(String queryId, VariableList inVl) throws Exception {
 		return miPQueryService.update(queryId, inVl);
 	}
 
 	/**
-     * This is the method for updating using Dataset.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inDs
-     * 		Dataset contains records to update.
+	 * This is the method for updating using Dataset.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inDs
+	 *            Dataset contains records to update.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */
+	 *             if there is any problem executing the query
+	 */
 	public int update(String queryId, Dataset inDs) throws Exception {
 		return update(queryId, inDs, null);
 	}
 
 	/**
-     * This is the method for updating using Dataset.
-     * @param queryId
-     * 		query id to execute in query mapping file.
-     * @param inDs
-     * 		Dataset contains records to update.
-     * @param actionCommand
-     * 		IMiPActionCommand contains biz. logic pre or post update. 
+	 * This is the method for updating using Dataset.
+	 * 
+	 * @param queryId
+	 *            query id to execute in query mapping file.
+	 * @param inDs
+	 *            Dataset contains records to update.
+	 * @param actionCommand
+	 *            IMiPActionCommand contains biz. logic pre or post update.
 	 * @throws Exception
-	 *		if there is any problem executing the
-	 *		query
-     */  
-	public int update(String queryId, Dataset inDs,
-			MiPActionCommand actionCommand) throws Exception {
+	 *             if there is any problem executing the query
+	 */
+	@SuppressWarnings("unchecked")
+	public int update(String queryId, Dataset inDs, MiPActionCommand actionCommand) throws Exception {
 		Map queryMap = new HashMap();
-		setDatasetStatus(TYPE_UPDATE, inDs );
+		setDatasetStatus(TYPE_UPDATE, inDs);
 		queryMap.put(MiPQueryService.QUERY_UPDATE, queryId);
-		return saveAll( queryMap, inDs , actionCommand);
+		return saveAll(queryMap, inDs, actionCommand);
 	}
-	
+
 	/**
 	 * This is the method for save(insert, update, delete) using Dataset.
+	 * 
 	 * @param queryMap
-	 * 		Three query ids for insert, update, and delete in query mapping file. 
+	 *            Three query ids for insert, update, and delete in query
+	 *            mapping file.
 	 * @param inDs
-	 * 		Dataset contains records to insert, update, delete.
+	 *            Dataset contains records to insert, update, delete.
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	public int saveAll(Map queryMap, Dataset inDs) throws Exception {
 		return saveAll(queryMap, inDs, null);
 	}
 
 	/**
 	 * This is the method for save(insert, update, delete) using Dataset.
+	 * 
 	 * @param queryMap
-	 * 			Three query ids for insert, update, and delete in query mapping file. 
+	 *            Three query ids for insert, update, and delete in query
+	 *            mapping file.
 	 * @param inDs
-	 * 			Dataset contains records to insert, update, delete.
+	 *            Dataset contains records to insert, update, delete.
 	 * @param actionCommand
-	 * 			IMiPActionCommand contains biz. logic pre or post insert, update, delete. 
+	 *            IMiPActionCommand contains biz. logic pre or post insert,
+	 *            update, delete.
 	 * @return
 	 * @throws Exception
 	 */
-	public int saveAll(Map queryMap, Dataset inDs,
-			MiPActionCommand actionCommand) throws Exception {
-		if(actionCommand == null){
+	@SuppressWarnings("unchecked")
+	public int saveAll(Map queryMap, Dataset inDs, MiPActionCommand actionCommand) throws Exception {
+		if (actionCommand == null) {
 			return miPQueryService.update(queryMap, inDs);
-		}else{
+		} else {
 			return miPQueryService.update(queryMap, inDs, actionCommand);
 		}
 	}
-	
+
 	/**
 	 * This is the method for callablestatement using Dataset.
+	 * 
 	 * @param queryMap
-	 * 			Three query ids for insert, update, and delete in query mapping file. 
+	 *            Three query ids for insert, update, and delete in query
+	 *            mapping file.
 	 * @param inDs
-	 * 			Dataset contains records to insert, update, delete.
+	 *            Dataset contains records to insert, update, delete.
 	 * @param actionCommand
-	 * 			IMiPActionCommand contains biz. logic pre or post insert, update, delete. 
+	 *            IMiPActionCommand contains biz. logic pre or post insert,
+	 *            update, delete.
 	 * @return
 	 * @throws Exception
 	 */
 	public DatasetList execute(String queryId, Dataset inDs) throws Exception {
 		return miPQueryService.execute(queryId, inDs);
 	}
-	
-	private void setDatasetStatus(short type, Dataset dataset) throws Exception{
+
+	private void setDatasetStatus(short type, Dataset dataset) throws Exception {
 		int rowCount = dataset.getRowCount();
-		
+
 		dataset.setUpdate(true);
-		for( int i = 0 ; i < rowCount ; i ++ ){
-			if( type == TYPE_INSERT  ){
-				dataset.setRowType(i, TYPE_INSERT );
-			}else if(type == TYPE_UPDATE){
-				dataset.setRowType(i, TYPE_UPDATE );
-			}else{
+		for (int i = 0; i < rowCount; i++) {
+			if (type == TYPE_INSERT) {
+				dataset.setRowType(i, TYPE_INSERT);
+			} else if (type == TYPE_UPDATE) {
+				dataset.setRowType(i, TYPE_UPDATE);
+			} else {
 				dataset.setRowType(0, TYPE_DELETE);
 			}
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2009 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import java.util.HashMap;
 import javax.servlet.ServletException;
 
 import org.anyframe.exception.BaseException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.tobesoft.platform.PlatformRequest;
 import com.tobesoft.platform.data.DatasetList;
@@ -36,12 +34,14 @@ public class AbstractMiPDispatchController extends AbstractMiPController {
 	 * method name. This collection is populated as different methods are
 	 * called, so that introspection needs to occur only once per method name.
 	 */
+	@SuppressWarnings("unchecked")
 	protected HashMap methods = new HashMap();
 
 	/**
 	 * The Class instance of this <code>AnyframeMiPDispatchConroller</code>
 	 * class.
 	 */
+	@SuppressWarnings("unchecked")
 	protected Class clazz = this.getClass();
 
 	/**
@@ -49,6 +49,7 @@ public class AbstractMiPDispatchController extends AbstractMiPController {
 	 * method name. This collection is populated as different methods are
 	 * called, so that introspection needs to occur only once per method name.
 	 */
+	@SuppressWarnings("unchecked")
 	protected Class[] types = { PlatformRequest.class, VariableList.class,
 			DatasetList.class, VariableList.class, DatasetList.class };
 
@@ -138,7 +139,7 @@ public class AbstractMiPDispatchController extends AbstractMiPController {
 			method.invoke(this, args);
 
 		} catch (IllegalAccessException e) {
-			logger.error(e);
+			logger.error("Can not access a dispatch method name",e);
 			throw e;
 
 		} catch (InvocationTargetException e) {
@@ -146,7 +147,7 @@ public class AbstractMiPDispatchController extends AbstractMiPController {
 			if (t instanceof Exception) {
 				throw ((Exception) t);
 			} else {
-				logger.error(t);
+				logger.error("Can not invoke a dispatch method name", t);
 				throw new ServletException(t);
 			}
 		}
@@ -161,6 +162,7 @@ public class AbstractMiPDispatchController extends AbstractMiPController {
 	 *            Name of the method to be introspected
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	protected Method getMethod(String name) throws Exception {
 		synchronized (methods) {
 			try {

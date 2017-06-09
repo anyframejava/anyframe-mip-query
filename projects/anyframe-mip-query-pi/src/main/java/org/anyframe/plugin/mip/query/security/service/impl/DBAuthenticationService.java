@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2011 the original author or authors.
+ * Copyright 2008-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
-import javax.inject.Inject;
-
 import org.anyframe.plugin.mip.query.security.service.AuthenticationService;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 import com.tobesoft.platform.data.Dataset;
@@ -44,9 +40,6 @@ public class DBAuthenticationService implements AuthenticationService {
     protected DataSource dataSource = null;
 
     private String sqlQuery = "SELECT USER_ID, PASSWORD, USER_NAME, EN_NAME, COMP_PHONE, PHONE, CELL_PHONE, COMPANY, JOB_POSITION, ASSIGNMENT, OFFICER_YN, FAX, ZIP_CODE, ADDRESS, COMP_ZIP_CODE, COMP_ADDRESS, EMAIL, DEPT_ID FROM MIP_USER WHERE USER_ID = ? AND PASSWORD =?";
-
-    private static Log logger =
-        LogFactory.getLog(DBAuthenticationService.class);
 
     public Dataset authenticate(Dataset dataset) throws Exception {
         Connection conn = null;

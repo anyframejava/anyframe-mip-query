@@ -35,10 +35,10 @@
 	
 	<bookinfo>
 		<copyright>
-			<year>2007-2011</year>
+			<year>2007-2012</year>
 			<holder>삼성SDS</holder>
 		</copyright>
-		<releaseinfo>Version 1.0.4</releaseinfo>
+		<releaseinfo>Version 1.0.5</releaseinfo>
 
 		<productname>Anyframe MiP Query Plugin</productname>
 
@@ -91,12 +91,18 @@
 					</thead>
 					<tbody>
 						<row>
-							<entry align="center"><ulink url="http://dev.anyframejava.org/docs/anyframe/plugin/optional/query-ria/1.0.2/reference/htmlsingle/query-ria.html">query-ria</ulink></entry>
+							<entry align="center"><ulink url="http://dev.anyframejava.org/docs/anyframe/plugin/optional/query-ria/1.0.3/reference/htmlsingle/query-ria.html">query-ria</ulink></entry>
 							<entry align="center" valign="middle">2.0.0 > *</entry>
 						</row>
 					</tbody>
 				</tgroup>
 			</informaltable>
+			<para role="introduction_title"><emphasis role="bold">MySQL 사용 시 유의사항</emphasis></para>
+			<para>
+				본 샘플 어플리케이션은 ID 채번을 위해 Database의 Sequence/Function 기능을 이용 하고있다.
+				샘플 어플리케이션을 MySQL DB를 사용하는 환경에서 설치할 때, Function을 사용자가 MySQL Client 프로그램을 이용하여 직접 등록 해야 한다.
+				Function 생성 구문은 [프로젝트 폴더]/db/scripts/mip-query-insert-data-mysql.sql 파일에 작성 되어있다.
+			</para>
 		</partintro>
 	</part>	
 	

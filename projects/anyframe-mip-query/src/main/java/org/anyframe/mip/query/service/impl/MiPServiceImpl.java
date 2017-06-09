@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2009 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import com.tobesoft.platform.data.DatasetList;
 import com.tobesoft.platform.data.VariableList;
 
 /**
+ * This class provides methods to call MiPDao to send queries.
  * 
  * @author Jonghoon, Kim
  * 
@@ -41,14 +42,12 @@ public class MiPServiceImpl implements MiPService {
 		this.mipDao = mipDao;
 	}
 
-	public void get(VariableList inVl, DatasetList inDl, VariableList outVl,
-			DatasetList outDl) throws Exception {
+	public void get(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
 
 		getList(inVl, inDl, outVl, outDl);
 	}
 
-	public void getList(VariableList inVl, DatasetList inDl,
-			VariableList outVl, DatasetList outDl) throws Exception {
+	public void getList(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
 
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
@@ -69,8 +68,7 @@ public class MiPServiceImpl implements MiPService {
 		}
 	}
 
-	public void getPagingList(VariableList inVl, DatasetList inDl,
-			VariableList outVl, DatasetList outDl) throws Exception {
+	public void getPagingList(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
 
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
@@ -89,8 +87,8 @@ public class MiPServiceImpl implements MiPService {
 		}
 	}
 
-	public void saveAll(VariableList inVl, DatasetList inDl,
-			VariableList outVl, DatasetList outDl) throws Exception {
+	@SuppressWarnings("unchecked")
+	public void saveAll(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
 
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
@@ -117,29 +115,25 @@ public class MiPServiceImpl implements MiPService {
 		}
 	}
 
-	public void create(VariableList inVl, DatasetList inDl, VariableList outVl,
-			DatasetList outDl) throws Exception {
+	public void create(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
 
 		String status = MiPQueryServiceImpl.QUERY_INSERT;
 		save(inVl, inDl, outVl, outDl, status);
 	}
 
-	public void remove(VariableList inVl, DatasetList inDl, VariableList outVl,
-			DatasetList outDl) throws Exception {
+	public void remove(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
 
 		String status = MiPQueryServiceImpl.QUERY_DELETE;
 		save(inVl, inDl, outVl, outDl, status);
 	}
 
-	public void update(VariableList inVl, DatasetList inDl, VariableList outVl,
-			DatasetList outDl) throws Exception {
+	public void update(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
 
 		String status = MiPQueryServiceImpl.QUERY_UPDATE;
 		save(inVl, inDl, outVl, outDl, status);
 	}
 
-	public void execute(VariableList inVl, DatasetList inDl,
-			VariableList outVl, DatasetList outDl) throws Exception {
+	public void execute(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl) throws Exception {
 
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
@@ -159,8 +153,8 @@ public class MiPServiceImpl implements MiPService {
 		}
 	}
 
-	private void save(VariableList inVl, DatasetList inDl, VariableList outVl,
-			DatasetList outDl, String status) throws Exception {
+	@SuppressWarnings("unchecked")
+	private void save(VariableList inVl, DatasetList inDl, VariableList outVl, DatasetList outDl, String status) throws Exception {
 
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
@@ -185,8 +179,7 @@ public class MiPServiceImpl implements MiPService {
 		}
 	}
 
-	private int getQuerySetCount(VariableList inVl, VariableList outVl)
-			throws Exception {
+	private int getQuerySetCount(VariableList inVl, VariableList outVl) throws Exception {
 		int querySetCount = 0;
 		querySetCount = inVl.getValueAsInteger("querySetCount").intValue();
 		return querySetCount;

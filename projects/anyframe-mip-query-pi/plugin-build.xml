@@ -2,16 +2,17 @@
 <plugin name="mip-query" description="Mip-Query Plugin consists of sample code that provides basic guidelines on how to use MiPlatform connection modules and common server modules provided by Anyframe, and reference libraries needed to use open sources.">
 	<groupId>org.anyframe.plugin</groupId>
 	<artifactId>anyframe-mip-query-pi</artifactId>
-	<version>1.0.4</version>
+	<version>1.0.5</version>
 	<dependent-plugins>
 		<dependent-plugin name="query-ria" version="2.0.0&gt;*" />
 	</dependent-plugins>
 	<resources>
 		<resource dir="src/main/java" filtered="true" packaged="true">
-			<include name="**/*.java" />
+			<include name="**/mip/query/**/*.java" />
 		</resource>
 		<resource dir="src/main/resources" filtered="true" packaged="false">
 			<include name="**/*.xml" />
+			<exclude name="**/spring/context-transaction.xml" />
 		</resource>
 		<resource dir="src/test/java" filtered="true" packaged="true">
 			<include name="**/*.java" />
@@ -40,9 +41,11 @@
 	<build>
 		<filesets>
 			<fileset dir="src/main/java" filtered="true" packaged="true">
-				<include name="**/org/anyframe/plugin/mip/query/**/*.java" />
+				<include name="**/mip/query/**/*.java" />
+				<include name="org/anyframe/plugin/common/aspect/LoggingAspect.java" />
 			</fileset>
 			<fileset dir="src/main/resources" filtered="true" packaged="false">
+				<include name="**/spring/context-transaction.xml" />
 				<include name="**/*mip-query*.xml" />
 				<include name="**/mip-query/**/*.xml" />
 				<include name="**/mip-generation-servlet.xml"/>
@@ -84,13 +87,30 @@
 			<dependency>
 				<groupId>org.anyframe</groupId>
 				<artifactId>anyframe-ide-command-common</artifactId>
-				<version>2.1.0</version>
+				<version>2.2.0</version>
 				<scope>interceptor</scope>
 			</dependency>
 			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>1.1.1</version>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.6.4</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>1.6.4</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+	            <groupId>log4j</groupId>
+	            <artifactId>log4j</artifactId>
+	            <version>1.2.15</version>
+	        </dependency>
+			<dependency>
+			  <groupId>org.slf4j</groupId>
+			  <artifactId>jcl-over-slf4j</artifactId>
+			  <version>1.6.4</version>
 			</dependency>
 		</dependencies>
 	</interceptor>

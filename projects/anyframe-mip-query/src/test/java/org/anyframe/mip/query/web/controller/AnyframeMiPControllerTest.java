@@ -23,8 +23,6 @@ import java.util.HashMap;
 import junit.framework.TestCase;
 
 import org.anyframe.mip.query.util.MiPMapper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -180,7 +178,7 @@ public class AnyframeMiPControllerTest extends TestCase {
         
         controller.handleRequestInternal(request, response);
         
-        ArrayList voList = new ArrayList();
+        ArrayList<MiPTestVO> voList = new ArrayList<MiPTestVO>();
         
         voList.add(initTestVO());
         voList.add(initTestVO());
@@ -213,14 +211,14 @@ public class AnyframeMiPControllerTest extends TestCase {
         
         Dataset ds = setDataset();
         
-        HashMap hashMap = MiPMapper.convertDatasetToListMap( MappingVO.class , ds);
+        HashMap<String, ArrayList<Object>> hashMap = MiPMapper.convertDatasetToListMap( MappingVO.class , ds);
         
         assertNotNull(hashMap);
-        assertEquals(2, ((ArrayList)hashMap.get("insert")).size());
-        assertEquals(2, ((ArrayList)hashMap.get("update")).size());
+        assertEquals(2, ((ArrayList<Object>)hashMap.get("insert")).size());
+        assertEquals(2, ((ArrayList<Object>)hashMap.get("update")).size());
         
-        ArrayList insertVOList =  (ArrayList)hashMap.get("insert");
-        ArrayList updateVOList =  (ArrayList)hashMap.get("update");
+        ArrayList<Object> insertVOList =  (ArrayList<Object>)hashMap.get("insert");
+        ArrayList<Object> updateVOList =  (ArrayList<Object>)hashMap.get("update");
         
         MappingVO insertVO1 = (MappingVO) insertVOList.get(0);
         MappingVO insertVO2 = (MappingVO) insertVOList.get(1);
@@ -249,14 +247,14 @@ public class AnyframeMiPControllerTest extends TestCase {
         Dataset ds = setDatasetUnderScore();
         ds.printDataset();
         
-        HashMap hashMap = MiPMapper.convertDatasetToListMap( MappingVO.class , ds, true);
+        HashMap<String, ArrayList<Object>> hashMap = MiPMapper.convertDatasetToListMap( MappingVO.class , ds, true);
         
         assertNotNull(hashMap);
-        assertEquals(2, ((ArrayList)hashMap.get("insert")).size());
-        assertEquals(2, ((ArrayList)hashMap.get("update")).size());
+        assertEquals(2, ((ArrayList<Object>)hashMap.get("insert")).size());
+        assertEquals(2, ((ArrayList<Object>)hashMap.get("update")).size());
         
-        ArrayList insertVOList =  (ArrayList)hashMap.get("insert");
-        ArrayList updateVOList =  (ArrayList)hashMap.get("update");
+        ArrayList<Object> insertVOList =  (ArrayList<Object>)hashMap.get("insert");
+        ArrayList<Object> updateVOList =  (ArrayList<Object>)hashMap.get("update");
         
         MappingVO insertVO1 = (MappingVO) insertVOList.get(0);
         MappingVO insertVO2 = (MappingVO) insertVOList.get(1);
@@ -279,9 +277,6 @@ public class AnyframeMiPControllerTest extends TestCase {
         private VariableList outVl;
         private DatasetList outDl;
         
-        private Log log =
-            LogFactory.getLog(TestMiPController.class);
-
         public void operate(PlatformRequest platformRequest, VariableList inVl,
                 DatasetList inDl, VariableList outVl, DatasetList outDl)
                 throws Exception {

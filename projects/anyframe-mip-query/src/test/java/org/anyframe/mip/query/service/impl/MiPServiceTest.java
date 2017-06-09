@@ -18,12 +18,18 @@ package org.anyframe.mip.query.service.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Date;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
+import junit.framework.Assert;
+
 import org.anyframe.mip.query.service.MiPService;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.DatasetList;
@@ -68,24 +74,24 @@ import com.tobesoft.platform.data.VariableList;
  * 
  * @author Jonghoon, Kim
  */
-public class MiPServiceTest extends
-		AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:/spring/context-*.xml" })
+public class MiPServiceTest {
 
 	private static short TYPE_NORMAL = 1;
 	private static short TYPE_INSERT = 2;
-	private static short TYPE_UPDATE = 4;
+	//private static short TYPE_UPDATE = 4;
 
-	public void setMiPService(MiPService mipService) {
-		this.mipService = mipService;
-	}
-
+	@Inject
 	private MiPService mipService;
-
+	
+	@Inject
+	private DataSource dataSource;
+	
+	@Before
 	public final void onSetUp() throws Exception {
 		// Test DB Setting
 		try {
-			DataSource dataSource = (DataSource) applicationContext
-					.getBean("dataSource");
 			Connection conn = dataSource.getConnection();
 			Statement statement = conn.createStatement();
 			try {
@@ -126,6 +132,7 @@ public class MiPServiceTest extends
 	 * keyword at two Datasets, expected value and search return value are
 	 * compared by executing query statement in normal fashion.
 	 */
+	@Test
 	public void testGetListUsingDataset() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -156,13 +163,13 @@ public class MiPServiceTest extends
 
 		mipService.getList(inVl, inDl, outVl, outDl);
 
-		assertEquals(2, outDl.size());
+		Assert.assertEquals(2, outDl.size());
 
 		Dataset ds1 = outDl.get("querySet1");
 		Dataset ds2 = outDl.get("querySet2");
 
-		assertEquals("BOARD-00002", ds1.getColumnAsString(0, "BOARD_NO"));
-		assertEquals("TITLE-0001", ds2.getColumnAsString(0, "BOARD_TITLE"));
+		Assert.assertEquals("BOARD-00002", ds1.getColumnAsString(0, "BOARD_NO"));
+		Assert.assertEquals("TITLE-0001", ds2.getColumnAsString(0, "BOARD_TITLE"));
 	}
 
 	/**
@@ -170,6 +177,7 @@ public class MiPServiceTest extends
 	 * VariantList, executing search query with it and compare search return
 	 * values, it is checked whether search is correctively executed.
 	 */
+	@Test
 	public void testGetListUsingVriableList() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -185,7 +193,7 @@ public class MiPServiceTest extends
 
 		Dataset ds = outDl.get("querySet1");
 
-		assertEquals("BOARD-00002", ds.getColumnAsString(0, "BOARD_NO"));
+		Assert.assertEquals("BOARD-00002", ds.getColumnAsString(0, "BOARD_NO"));
 	}
 
 	/**
@@ -193,6 +201,7 @@ public class MiPServiceTest extends
 	 * one page with page number and page unit at Constant Column. When paging
 	 * is searched with it, it is checked whether targeted list is searched.
 	 */
+	@Test
 	public void testGetListWithPage() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -212,9 +221,9 @@ public class MiPServiceTest extends
 		mipService.getPagingList(inVl, inDl, outVl, outDl);
 		Dataset ds = outDl.getDataset("querySet1");
 
-		assertEquals(3.0, ds.getConstColumn("totalCount").getDouble()
+		Assert.assertEquals(3.0, ds.getConstColumn("totalCount").getDouble()
 				.doubleValue(), 0.00);
-		assertEquals("BOARD-00002", ds.getColumnAsString(0, "BOARD_NO"));
+		Assert.assertEquals("BOARD-00002", ds.getColumnAsString(0, "BOARD_NO"));
 
 	}
 
@@ -223,6 +232,7 @@ public class MiPServiceTest extends
 	 * it is checked whether value is added at Database by calling for create
 	 * method.
 	 */
+	@Test
 	public void testInsertVariantList() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -239,7 +249,7 @@ public class MiPServiceTest extends
 		inVl.add("REG_DATE", "2009-09-07");
 
 		mipService.create(inVl, inDl, outVl, outDl);
-		assertEquals("1", outVl.get("querySet1").getValue().getString());
+		Assert.assertEquals("1", outVl.get("querySet1").getValue().getString());
 	}
 
 	/**
@@ -247,6 +257,7 @@ public class MiPServiceTest extends
 	 * it is checked whether value is added at Database by calling for create
 	 * method.
 	 */
+	@Test
 	public void testInsertDataset() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -271,7 +282,7 @@ public class MiPServiceTest extends
 		dsCreate1.setColumn(0, "CONTENTS", "CONTENTS-00004");
 		dsCreate1.setColumn(0, "REG_ID", "INSERT_TEST1");
 		dsCreate1.setColumn(0, "REG_DATE", "2011-03-02");
-		dsCreate1.setRowType(0, this.TYPE_INSERT );
+		dsCreate1.setRowType(0, MiPServiceTest.TYPE_INSERT );
 
 		dsCreate1.appendRow();
 		dsCreate1.setColumn(1, "BOARD_NO", "BOARD-00005");
@@ -280,7 +291,7 @@ public class MiPServiceTest extends
 		dsCreate1.setColumn(1, "REG_ID", "INSERT_TEST2");
 
 		dsCreate1.setColumn(1, "REG_DATE", "2011-03-02");
-		dsCreate1.setRowType(1, this.TYPE_INSERT);
+		dsCreate1.setRowType(1, MiPServiceTest.TYPE_INSERT);
 
 		Dataset dsCreate2 = new Dataset("querySet2");
 		dsCreate2.addStringColumn("BOARD_NO");
@@ -296,7 +307,7 @@ public class MiPServiceTest extends
 		dsCreate2.setColumn(0, "CONTENTS", "CONTENTS-00006");
 		dsCreate2.setColumn(0, "REG_ID", "INSERT_TEST3");
 		dsCreate2.setColumn(0, "REG_DATE", "2011-03-02");
-		dsCreate2.setRowType(0, this.TYPE_INSERT);
+		dsCreate2.setRowType(0, MiPServiceTest.TYPE_INSERT);
 
 		dsCreate2.appendRow();
 		dsCreate2.setColumn(1, "BOARD_NO", "BOARD-00007");
@@ -305,15 +316,15 @@ public class MiPServiceTest extends
 		dsCreate2.setColumn(1, "REG_ID", "INSERT_TEST8");
 
 		dsCreate2.setColumn(1, "REG_DATE", "2011-03-02");
-		dsCreate2.setRowType(1, this.TYPE_INSERT);
+		dsCreate2.setRowType(1, MiPServiceTest.TYPE_INSERT);
 
 		inDl.add("querySet1", dsCreate1);
 		inDl.add("querySet2", dsCreate2);
 
 		mipService.create(inVl, inDl, outVl, outDl);
 
-		assertEquals("2", outVl.get("querySet1").getValue().getString());
-		assertEquals("2", outVl.get("querySet2").getValue().getString());
+		Assert.assertEquals("2", outVl.get("querySet1").getValue().getString());
+		Assert.assertEquals("2", outVl.get("querySet2").getValue().getString());
 	}
 
 	/**
@@ -321,6 +332,7 @@ public class MiPServiceTest extends
 	 * VariantList, it is checked whether value is modified at Database by
 	 * calling for update method.
 	 */
+	@Test
 	public void testUpdateVariantList() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -337,7 +349,7 @@ public class MiPServiceTest extends
 		inVl.add("REG_DATE", "2009-09-07");
 
 		mipService.update(inVl, inDl, outVl, outDl);
-		assertEquals("1", outVl.get("querySet1").getValue().getString());
+		Assert.assertEquals("1", outVl.get("querySet1").getValue().getString());
 	}
 
 	/**
@@ -345,6 +357,7 @@ public class MiPServiceTest extends
 	 * it is checked whether value is deleted at Database by calling for update
 	 * method.
 	 */
+	@Test
 	public void testUpdateDataset() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -369,7 +382,7 @@ public class MiPServiceTest extends
 		dsUpdate1.setColumn(0, "CONTENTS", "CONTENTS-UPDATE1");
 		dsUpdate1.setColumn(0, "REG_ID", "UPDATE_TEST1");
 		dsUpdate1.setColumn(0, "REG_DATE", "2011-03-02");
-		dsUpdate1.setRowType(0, this.TYPE_NORMAL);
+		dsUpdate1.setRowType(0, MiPServiceTest.TYPE_NORMAL);
 		dsUpdate1.setColumn(0, "BOARD_TITLE", "TITLE-UPDATE1");
 
 		dsUpdate1.appendRow();
@@ -377,7 +390,7 @@ public class MiPServiceTest extends
 		dsUpdate1.setColumn(1, "CONTENTS", "CONTENTS-UPDATE2");
 		dsUpdate1.setColumn(1, "REG_ID", "UPDATE_TEST2");
 		dsUpdate1.setColumn(1, "REG_DATE", "2011-03-02");
-		dsUpdate1.setRowType(1, this.TYPE_NORMAL);
+		dsUpdate1.setRowType(1, MiPServiceTest.TYPE_NORMAL);
 		dsUpdate1.setColumn(1, "BOARD_TITLE", "TITLE-UPDATE2");
 
 		Dataset dsUpdate2 = new Dataset("querySet2");
@@ -395,7 +408,7 @@ public class MiPServiceTest extends
 		dsUpdate2.setColumn(0, "CONTENTS", "CONTENTS-UPDATE3");
 		dsUpdate2.setColumn(0, "REG_ID", "UPDATE_TEST3");
 		dsUpdate2.setColumn(0, "REG_DATE", "2011-03-02");
-		dsUpdate2.setRowType(0, this.TYPE_NORMAL);
+		dsUpdate2.setRowType(0, MiPServiceTest.TYPE_NORMAL);
 		dsUpdate2.setColumn(0, "BOARD_TITLE", "TITLE-UPDATE3");
 
 		inDl.add("querySet1", dsUpdate1);
@@ -403,8 +416,8 @@ public class MiPServiceTest extends
 
 		mipService.update(inVl, inDl, outVl, outDl);
 
-		assertEquals("2", outVl.get("querySet1").getValue().getString());
-		assertEquals("1", outVl.get("querySet2").getValue().getString());
+		Assert.assertEquals("2", outVl.get("querySet1").getValue().getString());
+		Assert.assertEquals("1", outVl.get("querySet2").getValue().getString());
 	}
 
 	/**
@@ -412,6 +425,7 @@ public class MiPServiceTest extends
 	 * it is checked whether value is deleted at Database by calling for remove
 	 * method.
 	 */
+	@Test
 	public void testRemoveVariantList() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -424,13 +438,14 @@ public class MiPServiceTest extends
 		inVl.add("BOARD_NO", "BOARD-00001");
 
 		mipService.remove(inVl, inDl, outVl, outDl);
-		assertEquals("1", outVl.get("querySet1").getValue().getString());
+		Assert.assertEquals("1", outVl.get("querySet1").getValue().getString());
 	}
 
 	/**
 	 * [Flow #-9] Positive Case :After setting data for deletion at Dataset, it
 	 * is checked whether value is deleted at Database.
 	 */
+	@Test
 	public void testRemoveDataset() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -447,7 +462,7 @@ public class MiPServiceTest extends
 
 		dsRemove1.appendRow();
 		dsRemove1.setColumn(0, "BOARD_NO", "BOARD-00002");
-		dsRemove1.setRowType(0, this.TYPE_NORMAL);
+		dsRemove1.setRowType(0, MiPServiceTest.TYPE_NORMAL);
 		dsRemove1.deleteRow(0);
 
 		Dataset dsRemove2 = new Dataset("querySet2");
@@ -456,7 +471,7 @@ public class MiPServiceTest extends
 
 		dsRemove2.appendRow();
 		dsRemove2.setColumn(0, "BOARD_NO", "BOARD-00003");
-		dsRemove2.setRowType(0, this.TYPE_NORMAL);
+		dsRemove2.setRowType(0, MiPServiceTest.TYPE_NORMAL);
 		dsRemove2.deleteRow(0);
 
 		inDl.add("querySet1", dsRemove1);
@@ -464,8 +479,8 @@ public class MiPServiceTest extends
 
 		mipService.remove(inVl, inDl, outVl, outDl);
 
-		assertEquals("1", outVl.get("querySet1").getValue().getString());
-		assertEquals("1", outVl.get("querySet2").getValue().getString());
+		Assert.assertEquals("1", outVl.get("querySet1").getValue().getString());
+		Assert.assertEquals("1", outVl.get("querySet2").getValue().getString());
 	}
 
 	/**
@@ -473,6 +488,7 @@ public class MiPServiceTest extends
 	 * and deletion at Dataset, by calling for saveALLmethod, it is checked
 	 * whether value is added, modified and deleted at Dataset.
 	 */
+	@Test
 	public void testSaveAll() throws Exception {
 		DatasetList inDl = new DatasetList();
 		VariableList inVl = new VariableList();
@@ -503,12 +519,12 @@ public class MiPServiceTest extends
 		dsSave.setColumn(1, "CONTENTS", "CONTENTS-00005");
 		dsSave.setColumn(1, "REG_ID", "SAVE_TEST2");
 		dsSave.setColumn(1, "REG_DATE", "2011-03-02");
-		dsSave.setRowType(1, this.TYPE_NORMAL);
+		dsSave.setRowType(1, MiPServiceTest.TYPE_NORMAL);
 		dsSave.setColumn(1, "BOARD_TITLE", "TITLE-UPDATE");
 
 		dsSave.appendRow();
 		dsSave.setColumn(2, "BOARD_NO", "BOARD-00002");
-		dsSave.setRowType(2, this.TYPE_NORMAL);
+		dsSave.setRowType(2, MiPServiceTest.TYPE_NORMAL);
 		dsSave.deleteRow(2);
 		
 		dsSave.setUpdate(false);
@@ -517,10 +533,6 @@ public class MiPServiceTest extends
 		
 		mipService.saveAll(inVl, inDl, outVl, outDl);
 
-		assertEquals("3", outVl.get("querySet1").getValue().getString());
-	}
-
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath:spring/context-*.xml" };
+		Assert.assertEquals("3", outVl.get("querySet1").getValue().getString());
 	}
 }

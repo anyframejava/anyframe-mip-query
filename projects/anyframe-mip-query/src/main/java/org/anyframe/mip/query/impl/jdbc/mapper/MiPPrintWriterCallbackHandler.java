@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.anyframe.query.QueryInfo;
 import org.anyframe.query.ria.RiaPrintWriterCallback;
 
 /**
+ * Class for Print Writer Mip Dataset 
+ * 
  * @author Soyon Lim
  * @author JongHoon Kim
  */
@@ -39,6 +41,7 @@ public class MiPPrintWriterCallbackHandler extends
 	private int[] columnTypes;
 	private String[] fieldNames;
 	private String[] columnNames;
+	@SuppressWarnings("unchecked")
 	private Map columnIndexMap = new HashMap();
 
 	public void setEncoding(String encoding) {
@@ -59,7 +62,7 @@ public class MiPPrintWriterCallbackHandler extends
 	 
 	 }
 	 
-    public MiPPrintWriterCallbackHandler(PrintWriter writer, QueryInfo queryInof) {
+    public MiPPrintWriterCallbackHandler(PrintWriter writer, QueryInfo queryInfo) {
         this.writer = writer;
         this.queryInfo = queryInfo;
     }
@@ -68,7 +71,8 @@ public class MiPPrintWriterCallbackHandler extends
         return 0;
     }
 
-    public void processRow(ResultSet rs) throws SQLException {
+    @SuppressWarnings("unchecked")
+	public void processRow(ResultSet rs) throws SQLException {
     	StringBuilder printString = null;
         if (rowCount == 0) {
             ResultSetMetaData rsmd = rs.getMetaData();

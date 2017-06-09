@@ -18,17 +18,22 @@ package org.anyframe.mip.query.impl;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
+
+import junit.framework.Assert;
 
 import org.anyframe.mip.query.MiPQueryService;
 import org.anyframe.query.QueryServiceException;
-import org.anyframe.util.DateUtil;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.dao.DataRetrievalFailureException;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.VariableList;
@@ -60,32 +65,22 @@ import com.tobesoft.platform.data.Variant;
  * 
  * @author Jonghoon Kim
  */
-public class MiPQueryServiceMaxFatchSizeTest extends
-		AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:/spring/maxfatchsize/context-*.xml" })
+public class MiPQueryServiceMaxFatchSizeTest {
 
+	@Inject
 	private DataSource dataSource;
+
+	@Inject
 	private MiPQueryService mipQueryService;
-
-	/**
-	 * Spring Configuration file is read.
-	 */
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath:/spring/maxfatchsize/context-*.xml" };
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
-	public void setMipQueryService(MiPQueryService mipQueryService) {
-		this.mipQueryService = mipQueryService;
-	}
 
 	/**
 	 * Basic table is created for test and basic data is entered.
 	 */
+	@Before
 	public void onSetUp() throws Exception {
-		super.onSetUp();
+
 		try {
 			Connection conn = dataSource.getConnection();
 			try {
@@ -97,38 +92,37 @@ public class MiPQueryServiceMaxFatchSizeTest extends
 					System.out.println("Fail to DROP Table.");
 				}
 
-statement.executeUpdate("CREATE TABLE TB_MIP_CUSTOMER ( "
-						+ "SSNO varchar2(13) NOT NULL, " + "NAME varchar2(20), "
-						+ "ADDRESS varchar2(20), " + "PRIMARY KEY (SSNO))");
+				statement.executeUpdate("CREATE TABLE TB_MIP_CUSTOMER ( " + "SSNO varchar2(13) NOT NULL, " + "NAME varchar2(20), " + "ADDRESS varchar2(20), "
+						+ "PRIMARY KEY (SSNO))");
 			} finally {
 				conn.close();
 			}
 		} catch (SQLException e) {
 			System.err.println("Unable to initialize database for test." + e);
-			fail("Unable to initialize database for test. " + e);
+			Assert.fail("Unable to initialize database for test. " + e);
 		}
 	}
 
 	/**
 	 * [Flow #-1] Positive Case : VariantList에 조회조건을 세팅하고 MiPQueryService의 find
-	 * method를 호출 하여  maxFetchSize를 초과하는 조회 결과가 검색되었을 경우
+	 * method를 호출 하여 maxFetchSize를 초과하는 조회 결과가 검색되었을 경우
 	 * DataRetrievalFailureException이 발생하는지 검증한다.
 	 * 
 	 * @throws Exception
 	 */
+	@Test
 	public void testFindDataSetWithVariant() throws Exception {
 		insertDataSet();
 
-		try{
-			Dataset resultDataSet = mipQueryService.search("findCustomerWithDynamicMaxFetchSize",
-					makeVariantList());
+		try {
+			//Dataset resultDataSet = mipQueryService.search("findCustomerWithDynamicMaxFetchSize", makeVariantList());
+			mipQueryService.search("findCustomerWithDynamicMaxFetchSize", makeVariantList());
 		} catch (QueryServiceException e) {
 			// 7. assert
-			assertTrue("fail to compare exception",
-					e.getCause() instanceof DataRetrievalFailureException);
+			Assert.assertTrue("fail to compare exception", e.getCause() instanceof DataRetrievalFailureException);
 		}
 	}
-	
+
 	/**
 	 * [Flow #-2] Positive Case : In the case where search result shows larger
 	 * than maxFetchSize and query defined at XML is executed by setting search
@@ -137,19 +131,19 @@ statement.executeUpdate("CREATE TABLE TB_MIP_CUSTOMER ( "
 	 * 
 	 * @throws Exception
 	 */
+	@Test
 	public void testFindDataSetWithData() throws Exception {
 		insertDataSet();
 
-		try{
-			Dataset resultDataSet = mipQueryService.search("findCustomerWithDynamicMaxFetchSize",
-					makeSelectDataSet("%12345678%"));
+		try {
+//			Dataset resultDataSet = mipQueryService.search("findCustomerWithDynamicMaxFetchSize", makeSelectDataSet("%12345678%"));
+			mipQueryService.search("findCustomerWithDynamicMaxFetchSize", makeSelectDataSet("%12345678%"));
 		} catch (QueryServiceException e) {
 			// 7. assert
-			assertTrue("fail to compare exception",
-					e.getCause() instanceof DataRetrievalFailureException);
+			Assert.assertTrue("fail to compare exception", e.getCause() instanceof DataRetrievalFailureException);
 		}
 	}
-	
+
 	/**
 	 * [Flow #-3] Positive Case : In the case where page size shows larger than
 	 * maxFetchSize and by setting search condition at VariantList and calling
@@ -158,12 +152,13 @@ statement.executeUpdate("CREATE TABLE TB_MIP_CUSTOMER ( "
 	 * 
 	 * @throws Exception
 	 */
+	@Test
 	public void testFindDataSetWithPaging() throws Exception {
 		insertDataSet();
 
 		// 테스트 데이터 1Row 추가
-		Map queryMap = new HashMap();
-		
+		Map<String, String> queryMap = new HashMap<String, String>();
+
 		queryMap.put(MiPQueryService.QUERY_INSERT, "createMiPMaxfatchSizeQueryService");
 		Dataset insertDataSet = new Dataset();
 		insertDataSet.setUpdate(true);
@@ -182,19 +177,18 @@ statement.executeUpdate("CREATE TABLE TB_MIP_CUSTOMER ( "
 		variant = new Variant();
 		variant.setObject("Seoul");
 		insertDataSet.setColumn(0, "ADDRESS", variant);
-		
-		int resultInsert = mipQueryService
-				.update(queryMap, insertDataSet);
-		
-		try{
-			Dataset resultDataSet = mipQueryService.search("findCustomerWithDynamic",
-					makeVariantList(), 1, 4 );
-			fail("fail to check maxFetchSize in case of pagination");
+
+//		int resultInsert = mipQueryService.update(queryMap, insertDataSet);
+		mipQueryService.update(queryMap, insertDataSet);
+
+		try {
+//			Dataset resultDataSet = mipQueryService.search("findCustomerWithDynamic", makeVariantList(), 1, 4);
+			mipQueryService.search("findCustomerWithDynamic", makeVariantList(), 1, 4);
+			Assert.fail("fail to check maxFetchSize in case of pagination");
 		} catch (QueryServiceException e) {
 			// 5. assert
 			e.printStackTrace();
-			assertTrue("fail to compare exception",
-					e.getCause() instanceof DataRetrievalFailureException);
+			Assert.assertTrue("fail to compare exception", e.getCause() instanceof DataRetrievalFailureException);
 		}
 	}
 
@@ -206,12 +200,13 @@ statement.executeUpdate("CREATE TABLE TB_MIP_CUSTOMER ( "
 	 * 
 	 * @throws Exception
 	 */
+	@Test
 	public void testFindDataSetWithPagingDataset() throws Exception {
 		insertDataSet();
 
 		// Test Data 1Row Test
-		Map queryMap = new HashMap();
-		
+		Map<String, String> queryMap = new HashMap<String, String>();
+
 		queryMap.put(MiPQueryService.QUERY_INSERT, "createMiPMaxfatchSizeQueryService");
 		Dataset insertDataSet = new Dataset();
 		insertDataSet.setUpdate(true);
@@ -230,82 +225,79 @@ statement.executeUpdate("CREATE TABLE TB_MIP_CUSTOMER ( "
 		variant = new Variant();
 		variant.setObject("Seoul");
 		insertDataSet.setColumn(0, "ADDRESS", variant);
-		
-		int resultInsert = mipQueryService
-				.update(queryMap, insertDataSet);
+
+//		int resultInsert = mipQueryService.update(queryMap, insertDataSet);
+		mipQueryService.update(queryMap, insertDataSet);
 		
 		Dataset searchDataset = makeSelectDataSet("%12345678%");
-		
+
 		searchDataset.setConstColumn("pageIndex", 1);
 		searchDataset.setConstColumn("pageSize", 4);
-		
-		try{
-			Dataset resultDataSet = mipQueryService.searchWithPaging("findCustomerWithDynamic", searchDataset );
-			fail("fail to check maxFetchSize in case of pagination");
+
+		try {
+//			Dataset resultDataSet = mipQueryService.searchWithPaging("findCustomerWithDynamic", searchDataset);
+			mipQueryService.searchWithPaging("findCustomerWithDynamic", searchDataset);
+			Assert.fail("fail to check maxFetchSize in case of pagination");
 		} catch (QueryServiceException e) {
 			// 5. assert
 			e.printStackTrace();
-			assertTrue("fail to compare exception",
-					e.getCause() instanceof DataRetrievalFailureException);
+			Assert.assertTrue("fail to compare exception", e.getCause() instanceof DataRetrievalFailureException);
 		}
 	}
-	
+
 	/**
 	 * Initial Data Value Setting for Test
+	 * 
 	 * @throws Exception
 	 */
 	private void insertDataSet() throws Exception {
-		Map queryMap = new HashMap();
-queryMap.put(MiPQueryService.QUERY_INSERT, "createMiPMaxfatchSizeQueryService");
+		Map<String, String> queryMap = new HashMap<String, String>();
+		queryMap.put(MiPQueryService.QUERY_INSERT, "createMiPMaxfatchSizeQueryService");
 
-		int resultInsert = mipQueryService
-				.update(queryMap, makeInsertDataSet());
-		assertEquals("Fail to insert MiPDataSet.", 3, resultInsert);
+		int resultInsert = mipQueryService.update(queryMap, makeInsertDataSet());
+		Assert.assertEquals("Fail to insert MiPDataSet.", 3, resultInsert);
 
 		findListDataSet(3);
 	}
-	
+
 	/**
 	 * Test is conducted and then searched to verify the result value.
+	 * 
 	 * @param expected
 	 * @throws Exception
 	 */
 	private void findListDataSet(int expected) throws Exception {
-		Dataset resultDataSet = mipQueryService.search(
-				"findCustomerWithDynamic", makeSelectDataSet("%12345678%"));
-		assertEquals("Fail to find MiPDataSet.", expected, resultDataSet
-				.getRowCount());
+		Dataset resultDataSet = mipQueryService.search("findCustomerWithDynamic", makeSelectDataSet("%12345678%"));
+		Assert.assertEquals("Fail to find MiPDataSet.", expected, resultDataSet.getRowCount());
 
 		int totalRowCount = resultDataSet.getRowCount();
 		for (int rowNum = 0; rowNum < totalRowCount; rowNum++) {
 			Variant ssno = resultDataSet.getColumn(rowNum, "ssno");
-			assertTrue("Fail to check result.", ssno.getString()
-					.startsWith("123456789"));
-			
+			Assert.assertTrue("Fail to check result.", ssno.getString().startsWith("123456789"));
+
 			Variant name = resultDataSet.getColumn(rowNum, "name");
-			assertTrue("Fail to check result.", name.getString()
-					.startsWith("Anyframe"));
+			Assert.assertTrue("Fail to check result.", name.getString().startsWith("Anyframe"));
 
 		}
 	}
 
 	/**
 	 * Test is conducted and then searched to verify the return value.
+	 * 
 	 * @param searchKeyword
 	 * @return
 	 * @throws QueryServiceException
 	 */
-	private Dataset findDataSet(String searchKeyword)
-			throws Exception {
-		Dataset resultDataSet = mipQueryService.search("findMiPQueryService",
-				makeSelectDataSet(searchKeyword));
-		assertEquals(1, resultDataSet.getRowCount());
+	/*private Dataset findDataSet(String searchKeyword) throws Exception {
+		Dataset resultDataSet = mipQueryService.search("findMiPQueryService", makeSelectDataSet(searchKeyword));
+		Assert.assertEquals(1, resultDataSet.getRowCount());
 
 		return resultDataSet;
-	}
+	}*/
 
 	/**
 	 * Dataset Setting
+	 * 
 	 * @return
 	 */
 	private Dataset makeInsertDataSet() {
@@ -348,12 +340,13 @@ queryMap.put(MiPQueryService.QUERY_INSERT, "createMiPMaxfatchSizeQueryService");
 		variant = new Variant();
 		variant.setObject("Incheon");
 		insertDataSet.setColumn(2, "ADDRESS", variant);
-		
+
 		return insertDataSet;
 	}
 
 	/**
 	 * Setting with Search Condition
+	 * 
 	 * @param searchKeyword
 	 * @return
 	 */
@@ -371,6 +364,7 @@ queryMap.put(MiPQueryService.QUERY_INSERT, "createMiPMaxfatchSizeQueryService");
 
 	/**
 	 * VariableList Setting with Search Condition
+	 * 
 	 * @return
 	 */
 	private VariableList makeVariantList() {
@@ -380,5 +374,5 @@ queryMap.put(MiPQueryService.QUERY_INSERT, "createMiPMaxfatchSizeQueryService");
 		variableList.addVariable("SSNO", variant);
 		return variableList;
 	}
-	
+
 }

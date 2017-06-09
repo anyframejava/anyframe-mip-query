@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,8 +91,7 @@ public interface MiPQueryService {
 	 * @throws Exception
 	 *             if there is any problem executing the query
 	 */
-	Dataset search(String queryId, VariableList variableList)
-			throws Exception;
+	Dataset search(String queryId, VariableList variableList) throws Exception;
 
 	/**
 	 * This is a method for querying with paging using the VariableList
@@ -110,8 +109,7 @@ public interface MiPQueryService {
 	 * @throws Exception
 	 *             if there is any problem executing the query
 	 */
-	Dataset search(String queryId, VariableList variableList, int pageIndex,
-			int pageSize) throws Exception;
+	Dataset search(String queryId, VariableList variableList, int pageIndex, int pageSize) throws Exception;
 
 	/**
 	 * This is a method for querying using the Dataset
@@ -147,24 +145,21 @@ public interface MiPQueryService {
 	 * @throws Exception
 	 *             if there is any problem executing the query
 	 */
-	void search(String queryId, VariableList variableList, int pageIndex,
-			int pageSize, String dataSetName, PrintWriter writer)
-			throws Exception;
+	void search(String queryId, VariableList variableList, int pageIndex, int pageSize, String dataSetName, PrintWriter writer) throws Exception;
 
-	 /**
-     * This is a method for querying using the Dataset for paging
-     * @param queryId
-     *        identifier of query statement to execute
-     * @param dataSet
-     *        the Dataset including the query
-     *        conditions, page index("pageIndex") and page size("pageSize").
-     * @return Dataset of extracted out parameters
-     * @throws Exception
-     *         if there is any problem executing the
-     *         query
-     */
-    Dataset searchWithPaging(String queryId, Dataset dataSet)
-			throws Exception;
+	/**
+	 * This is a method for querying using the Dataset for paging
+	 * 
+	 * @param queryId
+	 *            identifier of query statement to execute
+	 * @param dataSet
+	 *            the Dataset including the query conditions, page
+	 *            index("pageIndex") and page size("pageSize").
+	 * @return Dataset of extracted out parameters
+	 * @throws Exception
+	 *             if there is any problem executing the query
+	 */
+	Dataset searchWithPaging(String queryId, Dataset dataSet) throws Exception;
 
 	/**
 	 * This is the method for inserting, updating and deleting the unitary data
@@ -178,8 +173,7 @@ public interface MiPQueryService {
 	 * @throws QueryServiceException
 	 *             if there is any problem executing the query
 	 */
-	int update(String queryId, VariableList variableList)
-			throws QueryServiceException;
+	int update(String queryId, VariableList variableList) throws QueryServiceException;
 
 	/**
 	 * This is the method for inserting, updating and deleting using
@@ -201,8 +195,8 @@ public interface MiPQueryService {
 	 * @throws QueryServiceException
 	 *             if there is any problem executing the query
 	 */
-	int update(String queryId, VariableList variableList, Map queryMap,
-			Dataset paramDataSet) throws QueryServiceException;
+	@SuppressWarnings("unchecked")
+	int update(String queryId, VariableList variableList, Map queryMap, Dataset paramDataSet) throws QueryServiceException;
 
 	/**
 	 * This is for inserting, updating and deleting using VariableList and
@@ -228,9 +222,8 @@ public interface MiPQueryService {
 	 * @throws QueryServiceException
 	 *             if there is any problem executing the query
 	 */
-	int update(String queryId, VariableList variableList, Map queryMap,
-			Dataset dataSet, MiPActionCommand actionCommand)
-			throws QueryServiceException;
+	@SuppressWarnings("unchecked")
+	int update(String queryId, VariableList variableList, Map queryMap, Dataset dataSet, MiPActionCommand actionCommand) throws QueryServiceException;
 
 	/**
 	 * the method for inserting, updating and deleting using the Dataset to the
@@ -248,6 +241,7 @@ public interface MiPQueryService {
 	 * @throws QueryServiceException
 	 *             if there is any problem executing the query
 	 */
+	@SuppressWarnings("unchecked")
 	int update(Map queryMap, Dataset dataSet) throws QueryServiceException;
 
 	/**
@@ -270,33 +264,33 @@ public interface MiPQueryService {
 	 * @throws QueryServiceException
 	 *             if there is any problem executing the query
 	 */
-	int update(Map queryMap, Dataset dataSet, MiPActionCommand actionCommand)
-			throws QueryServiceException;
+	@SuppressWarnings("unchecked")
+	int update(Map queryMap, Dataset dataSet, MiPActionCommand actionCommand) throws QueryServiceException;
 
 	/**
-	 * This is the method for executing callablestatement without Dataset
-	 * to the database. 
+	 * This is the method for executing callablestatement without Dataset to the
+	 * database.
 	 * 
 	 * @param queryId
 	 *            identifier of query statement to execute
-	 * @return Dataset of extracted out parameters          
+	 * @return Dataset of extracted out parameters
 	 * @throws QueryServiceException
 	 *             if there is any problem executing the query
 	 */
-	DatasetList execute(String queryId)throws QueryServiceException;
-	
+	DatasetList execute(String queryId) throws QueryServiceException;
+
 	/**
-	 * This is the method for executing callablestatement using the Dataset
-	 * to the database. 
+	 * This is the method for executing callablestatement using the Dataset to
+	 * the database.
 	 * 
 	 * @param queryId
 	 *            identifier of query statement to execute
 	 * @param datasetlist
 	 *            the DatasetList including the query conditions
-	 * @return Dataset of extracted out parameters          
+	 * @return Dataset of extracted out parameters
 	 * @throws QueryServiceException
 	 *             if there is any problem executing the query
 	 */
-	DatasetList execute(String queryId, Dataset dataset)throws QueryServiceException;
-	
+	DatasetList execute(String queryId, Dataset dataset) throws QueryServiceException;
+
 }

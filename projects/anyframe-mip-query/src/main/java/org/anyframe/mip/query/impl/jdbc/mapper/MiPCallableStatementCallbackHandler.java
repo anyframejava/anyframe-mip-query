@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2009 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import org.anyframe.query.QueryInfo;
 import org.anyframe.query.QueryService;
 import org.anyframe.query.ria.RiaCallableStatementCallback;
 import org.springframework.dao.DataAccessException;
@@ -31,12 +30,17 @@ import org.springframework.jdbc.support.lob.LobHandler;
 import com.tobesoft.platform.data.ColumnInfo;
 import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.Variant;
-
+/**
+ * Callback Handler Class for CallableStatement
+ * 
+ * @author youngmin.jo
+ */
+@SuppressWarnings("unchecked")
 public class MiPCallableStatementCallbackHandler extends MiPCallbackSupport implements RiaCallableStatementCallback {
 
 	public MiPCallableStatementCallbackHandler() {
 	}
-
+	
 	private ArrayList sqlParams;
 	private LobHandler lobHandler;
 	
@@ -47,6 +51,14 @@ public class MiPCallableStatementCallbackHandler extends MiPCallbackSupport impl
 	public void setLobHandler(LobHandler lobHandler){
 		this.lobHandler = lobHandler;
 	}
+	
+	/**
+	 * @return
+	 */
+	public LobHandler getLobHandler() {
+		return this.lobHandler;
+	}
+	
 	public Object doInCallableStatement(CallableStatement cs)
 			throws SQLException, DataAccessException {
 		
@@ -60,9 +72,8 @@ public class MiPCallableStatementCallbackHandler extends MiPCallbackSupport impl
 				int sqlType = outParams.getSqlType();
 				String paramName = outParams.getName();
 
-				if ( sqlType == this.CUSOR ){
+				if ( sqlType == MiPCallableStatementCallbackHandler.CUSOR ){
 					rs = (ResultSet) cs.getObject(i + 1);
-					ResultSetMetaData rsMeta = rs.getMetaData();
 					dataset = setResultDataset( paramName , rs);
 				}else{
 					Object obj = cs.getObject(i + 1);

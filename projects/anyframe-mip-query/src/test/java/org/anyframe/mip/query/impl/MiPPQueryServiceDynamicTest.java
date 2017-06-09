@@ -21,43 +21,38 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.sql.DataSource;
 
+import junit.framework.Assert;
+
 import org.anyframe.mip.query.MiPQueryService;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.Variable;
 import com.tobesoft.platform.data.VariableList;
 import com.tobesoft.platform.data.Variant;
 
-public class MiPPQueryServiceDynamicTest extends
-		AbstractDependencyInjectionSpringContextTests {
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:/spring/context-*.xml"})
+public class MiPPQueryServiceDynamicTest {
 	
+	@Inject
 	private DataSource dataSource;
+	
+	@Inject
 	private MiPQueryService mipQueryService;
-
-	public void setXpQueryService(MiPQueryService mipQueryService) {
-		this.mipQueryService = mipQueryService;
-	}
-
-	/**
-	 * Spring Configuration file is read. 
-	 */
-	protected String[] getConfigLocations() {
-		return new String[] { "classpath:/spring/context-*.xml" };
-	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
 
 	/**
 	 * Basic table is created for test and and basic data is entered. 
 	 */
+	@Before
 	public void onSetUp() throws Exception {
-		super.onSetUp();
 		try {
 			Connection conn = dataSource.getConnection();
 			try {
@@ -82,12 +77,13 @@ public class MiPPQueryServiceDynamicTest extends
 			}
 		} catch (SQLException e) {
 			System.err.println("Unable to initialize database for test." + e);
-			fail("Unable to initialize database for test. " + e);
+			Assert.fail("Unable to initialize database for test. " + e);
 		}
 	}
-
+	
+	@Test
 	public void testDynamicWithForEachVariableList() throws Exception {
-		List logonIdList = new ArrayList();
+		List<String> logonIdList = new ArrayList<String>();
 		logonIdList.add("admin");
 		logonIdList.add("test");
 		
@@ -100,12 +96,12 @@ public class MiPPQueryServiceDynamicTest extends
 		
 		Dataset resultDs = mipQueryService.search("dynamicWithForEachVariableList",variableList );
 		
-		assertEquals( 2, resultDs.getRowCount() );
-		assertEquals( "ADMIN", resultDs.getColumnAsObject( 0 , "name") );
-		assertEquals( "TESTER", resultDs.getColumnAsObject( 1 , "name") );
+		Assert.assertEquals( 2, resultDs.getRowCount() );
+		Assert.assertEquals( "ADMIN", resultDs.getColumnAsObject( 0 , "name") );
+		Assert.assertEquals( "TESTER", resultDs.getColumnAsObject( 1 , "name") );
 	}
 	
-
+	@Test
 	public void testDynamicQueryUsingTextReplaceVariableList() throws Exception {
         // 1. set data for test
     	VariableList variableList = new VariableList();
@@ -118,11 +114,12 @@ public class MiPPQueryServiceDynamicTest extends
 		
         // 2. execute query
         Dataset resultDs =  mipQueryService.search("dynamicQueryUsingTextReplaceVariableList", variableList);
-        assertEquals( 2, resultDs.getRowCount() );
-		assertEquals( "admin", resultDs.getColumnAsObject( 0 , "logonId") );
-		assertEquals( "test", resultDs.getColumnAsObject( 1 , "logonId") );
+        Assert.assertEquals( 2, resultDs.getRowCount() );
+        Assert.assertEquals( "admin", resultDs.getColumnAsObject( 0 , "logonId") );
+        Assert.assertEquals( "test", resultDs.getColumnAsObject( 1 , "logonId") );
     }
     
+	@Test
     public void testDynamicQueryUsingIfVariableList() throws Exception {
         
     	//When SEARCH_CONDITION is NULL
@@ -135,7 +132,7 @@ public class MiPPQueryServiceDynamicTest extends
 		
         // 2. execute query
         Dataset resultDs =  mipQueryService.search("dynamicQueryUsingIfVariableList", variableList);
-        assertEquals( 2 , resultDs.getRowCount() );
+        Assert.assertEquals( 2 , resultDs.getRowCount() );
         
         //USER whose LOGON_I.D. is admin is searched.
         variableList.clear();
@@ -145,8 +142,8 @@ public class MiPPQueryServiceDynamicTest extends
         
 		resultDs =  mipQueryService.search("dynamicQueryUsingIfVariableList", variableList);
 		
-		assertEquals( 1 , resultDs.getRowCount() );
-		assertEquals( "admin" , resultDs.getColumnAsString( 0 , "logonId") );
+		Assert.assertEquals( 1 , resultDs.getRowCount() );
+		Assert.assertEquals( "admin" , resultDs.getColumnAsString( 0 , "logonId") );
 		
 		//USER whose LOGON_I.D. is test123 is searched.
         variableList.clear();
@@ -156,10 +153,11 @@ public class MiPPQueryServiceDynamicTest extends
         
 		resultDs =  mipQueryService.search("dynamicQueryUsingIfVariableList", variableList);
 		
-		assertEquals( 1 , resultDs.getRowCount() );
-		assertEquals( "TESTER" , resultDs.getColumnAsString( 0 , "name") );
+		Assert.assertEquals( 1 , resultDs.getRowCount() );
+		Assert.assertEquals( "TESTER" , resultDs.getColumnAsString( 0 , "name") );
     }
     
+	@Test
     public void testDynamicQueryUsingIfDataSet() throws Exception {
         
     	//When SEARCH_CONDITION is NULL
@@ -173,7 +171,7 @@ public class MiPPQueryServiceDynamicTest extends
 		
         // 2. execute query
         Dataset resultDs =  mipQueryService.search("dynamicQueryUsingIfDataSet", dsSearch);
-        assertEquals( 2 , resultDs.getRowCount() );
+        Assert.assertEquals( 2 , resultDs.getRowCount() );
         
         //USER whose LOGON_I.D. is admin is searched.
 		dsSearch.setColumn( 0, "SEARCH_CONDITION", "LOGON_ID" );
@@ -181,8 +179,8 @@ public class MiPPQueryServiceDynamicTest extends
 		
 		resultDs =  mipQueryService.search("dynamicQueryUsingIfDataSet", dsSearch);
 		
-		assertEquals( 1 , resultDs.getRowCount() );
-		assertEquals( "admin" , resultDs.getColumnAsString( 0 , "logonId") );
+		Assert.assertEquals( 1 , resultDs.getRowCount() );
+		Assert.assertEquals( "admin" , resultDs.getColumnAsString( 0 , "logonId") );
 		
 		//USER whose LOGON_I.D. is test123 is searched.
 		dsSearch.setColumn( 0, "SEARCH_CONDITION", "NAME" );
@@ -190,7 +188,7 @@ public class MiPPQueryServiceDynamicTest extends
 		
 		resultDs =  mipQueryService.search("dynamicQueryUsingIfDataSet", dsSearch);
 		
-		assertEquals( 1 , resultDs.getRowCount() );
-		assertEquals( "TESTER" , resultDs.getColumnAsString( 0 , "name") );
+		Assert.assertEquals( 1 , resultDs.getRowCount() );
+		Assert.assertEquals( "TESTER" , resultDs.getColumnAsString( 0 , "name") );
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 package org.anyframe.mip.query.util;
 
 import java.lang.reflect.AccessibleObject;
@@ -33,20 +33,24 @@ import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.VariableList;
 import com.tobesoft.platform.data.Variant;
 
-
 /**
  * The Util class needed at UI development using the Tobesoft's MiPlatform
- * <p>The MiPlatform's data tranmitting object are Dataset and VariableList.
- * So, it is different from the VO object used in Java.  When transmitting the
- * user inputed value by VO in Server Side, there needs a conversion of Data
- * for transmitting the value to the presentation layer again.</p>
+ * <p>
+ * The MiPlatform's data tranmitting object are Dataset and VariableList. So, it
+ * is different from the VO object used in Java. When transmitting the user
+ * inputed value by VO in Server Side, there needs a conversion of Data for
+ * transmitting the value to the presentation layer again.
+ * </p>
  * <br>
- * <p>Consists of the method helping converting the data such as Dataset, 
+ * <p>
+ * Consists of the method helping converting the data such as Dataset,
  * VariableList and VO for MiPMapper.
+ * 
  * @author Byunghun Woo
  */
+@SuppressWarnings("unchecked")
 public class MiPMapper {
-	
+
 	/**
 	 * <p>
 	 * This method converts Value Object(VO) List into Dataset(MiPlatform).
@@ -64,13 +68,12 @@ public class MiPMapper {
 	 * @throws ServletException
 	 * @throws Exception
 	 */
-	public static Dataset convertVoListToDataset(String dataSetName, List voList,
-			boolean isCheck) throws ServletException, Exception {
+	public static Dataset convertVoListToDataset(String dataSetName, List voList, boolean isCheck) throws ServletException, Exception {
 		Dataset dataSet = new Dataset(dataSetName);
 		populate(dataSet, voList, isCheck);
 		return dataSet;
 	}
-	
+
 	/**
 	 * <p>
 	 * This method converts Value Object(VO) into Dataset(MiPlatform).
@@ -87,13 +90,12 @@ public class MiPMapper {
 	 * @throws ServletException
 	 * @throws Exception
 	 */
-	public static Dataset convertVoToDataset(String dataSetName, Object obj,
-			boolean isCheck) throws ServletException, Exception {
+	public static Dataset convertVoToDataset(String dataSetName, Object obj, boolean isCheck) throws ServletException, Exception {
 		Dataset dataSet = new Dataset(dataSetName);
 		populate(dataSet, obj, isCheck);
 		return dataSet;
 	}
-	
+
 	/**
 	 * <p>
 	 * This method converts Dataset into ListMap(VO LIST). if Dataset's status
@@ -110,11 +112,10 @@ public class MiPMapper {
 	 * @throws ServletException
 	 * @throws Exception
 	 */
-	public static HashMap<String, ArrayList<Object>> convertDatasetToListMap(Class cls, Dataset ds)
-		throws ServletException, Exception {
+	public static HashMap<String, ArrayList<Object>> convertDatasetToListMap(Class cls, Dataset ds) throws ServletException, Exception {
 		return populateCudList(cls, ds);
 	}
-	
+
 	/**
 	 * <p>
 	 * This method converts Dataset into ListMap(VO LIST). if Dataset's status
@@ -136,21 +137,24 @@ public class MiPMapper {
 	 * @throws ServletException
 	 * @throws Exception
 	 */
-	public static HashMap<String, ArrayList<Object>> convertDatasetToListMap(Class cls, Dataset ds,
-			boolean convertToCamenCase) throws ServletException, Exception {
+	public static HashMap<String, ArrayList<Object>> convertDatasetToListMap(Class cls, Dataset ds, boolean convertToCamenCase) throws ServletException,
+			Exception {
 		return populateCudList(cls, ds, convertToCamenCase);
 	}
-	
+
 	/**
 	 * Execute the data bind of VariableList and VO class.
+	 * 
 	 * @param vo
-	 * 			Sever Side VO
+	 *            Sever Side VO
 	 * @param variableList
-	 * 			MiPlatform VariableList
+	 *            MiPlatform VariableList
 	 */
-	private static void populate(Object vo, VariableList variableList){
+	@SuppressWarnings("unused")
+	private static void populate(Object vo, VariableList variableList) {
 		populate(vo, variableList, false);
 	}
+
 	/**
 	 * Execute the data bind of VariableList and VO. The VO's attribute name is
 	 * of CameCase. And, the VariableList's Attribute Name includes
@@ -165,10 +169,10 @@ public class MiPMapper {
 	 *            When changing to CamelCase the VariableList' Attribute Name,
 	 *            then true.
 	 */
-	private static void populate(Object vo, VariableList variableList, boolean converToCamelCase){
-		new MiPDataBinder(vo,converToCamelCase).bind(variableList);
+	private static void populate(Object vo, VariableList variableList, boolean converToCamelCase) {
+		new MiPDataBinder(vo, converToCamelCase).bind(variableList);
 	}
-	
+
 	/**
 	 * Map the VO the value of Dataset The populate method is different from
 	 * populateCudList in that all Data record without relation to stauts maps
@@ -182,9 +186,11 @@ public class MiPMapper {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	private static Collection<Object> populate(Class voClazz, Dataset dataList) throws InstantiationException, IllegalAccessException{
+	@SuppressWarnings("unused")
+	private static Collection<Object> populate(Class voClazz, Dataset dataList) throws InstantiationException, IllegalAccessException {
 		return populate(voClazz, dataList, false);
 	}
+
 	/**
 	 * Map VO the Dataset's value The populate method is different from
 	 * populateCudList in that all Data record without relation to stauts maps
@@ -203,17 +209,19 @@ public class MiPMapper {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	private static Collection<Object> populate(Class voClazz, Dataset dataList, boolean converToCamelCase) throws InstantiationException, IllegalAccessException{
+	private static Collection<Object> populate(Class voClazz, Dataset dataList, boolean converToCamelCase) throws InstantiationException,
+			IllegalAccessException {
 		int rowCount = dataList.getRowCount();
 		ArrayList<Object> list = new ArrayList<Object>();
 		Object vo = null;
-		for(int i=0;i<rowCount;i++){		
+		for (int i = 0; i < rowCount; i++) {
 			vo = voClazz.newInstance();
-			list.add(vo);			
+			list.add(vo);
 			new MiPDataBinder(vo, converToCamelCase).bind(dataList, i);
 		}
-		return list;		
+		return list;
 	}
+
 	/**
 	 * The Dataset consists of many records. Each record has the status such as
 	 * insert, update and delete. populatedCudList method maps by dividing in
@@ -229,10 +237,10 @@ public class MiPMapper {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	private static HashMap<String, ArrayList<Object>> populateCudList(Class voClazz, Dataset dataList) throws InstantiationException, IllegalAccessException{
+	private static HashMap<String, ArrayList<Object>> populateCudList(Class voClazz, Dataset dataList) throws InstantiationException, IllegalAccessException {
 		return populateCudList(voClazz, dataList, false);
 	}
-	
+
 	/**
 	 * The Dataset consists of many records and each record has status such as
 	 * insert, update and delete. populateCuList method returns by saving in the
@@ -254,19 +262,20 @@ public class MiPMapper {
 	 * @throws InstantiationException
 	 * @throws IllegalAccessException
 	 */
-	private static HashMap<String, ArrayList<Object>> populateCudList(Class voClazz, Dataset dataList, boolean converToCamelCase) throws InstantiationException, IllegalAccessException{
+	private static HashMap<String, ArrayList<Object>> populateCudList(Class voClazz, Dataset dataList, boolean converToCamelCase)
+			throws InstantiationException, IllegalAccessException {
 		ArrayList<Object> insertList = new ArrayList<Object>();
 		ArrayList<Object> updateList = new ArrayList<Object>();
 		ArrayList<Object> deleteList = new ArrayList<Object>();
-		
+
 		HashMap<String, ArrayList<Object>> resultMap = new HashMap<String, ArrayList<Object>>();
-		resultMap.put("insert",insertList);
-		resultMap.put("update",updateList);
-		resultMap.put("delete",deleteList);
+		resultMap.put("insert", insertList);
+		resultMap.put("update", updateList);
+		resultMap.put("delete", deleteList);
 
 		Object vo = null;
 		int rowCount = dataList.getRowCount();
-		for(int i=0;i<rowCount;i++){		
+		for (int i = 0; i < rowCount; i++) {
 			vo = voClazz.newInstance();
 			if ("insert".equals(dataList.getRowStatus(i)))
 				insertList.add(vo);
@@ -277,57 +286,65 @@ public class MiPMapper {
 		}
 
 		int deleteRowCount = dataList.getDeleteRowCount();
-		for(int i=0;i<deleteRowCount;i++){
+		for (int i = 0; i < deleteRowCount; i++) {
 			vo = voClazz.newInstance();
 			deleteList.add(vo);
 			new MiPDataBinder(vo, converToCamelCase).bind(dataList, i, true);
 		}
-		return resultMap;		
-	}	
+		return resultMap;
+	}
+
 	/**
 	 * Maps the VO to VariaableList
+	 * 
 	 * @param variableList
-	 * 			MiPlatform variableList
+	 *            MiPlatform variableList
 	 * @param vo
-	 * 			Sever Side VO
+	 *            Sever Side VO
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
 	 */
+	@SuppressWarnings("unused")
 	private static void populate(VariableList variableList, Object vo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Map<String, Object> propertyMap = setParameterMap(vo);
-		Iterator variableIterator =  propertyMap.entrySet().iterator();
+		Iterator variableIterator = propertyMap.entrySet().iterator();
 		Object key = null;
 		Object value = null;
-		while(variableIterator.hasNext()){
-			Map.Entry entry = (Map.Entry)variableIterator.next();
+		while (variableIterator.hasNext()) {
+			Map.Entry entry = (Map.Entry) variableIterator.next();
 			key = entry.getKey();
 			value = entry.getValue();
-			variableList.addVariable((String)key, value);
-		}		
+			variableList.addVariable((String) key, value);
+		}
 	}
+
 	/**
 	 * Maps to Dataset the VO
+	 * 
 	 * @param dataList
-	 * 			MiPlatform Dataset
+	 *            MiPlatform Dataset
 	 * @param vo
-	 * 			Server Side VO
+	 *            Server Side VO
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
 	 */
+	@SuppressWarnings("unused")
 	private static void populate(Dataset dataList, Object vo) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		populate(dataList, vo, false);
 	}
+
 	/**
-	 * Maps Dataset the VO
-	 * In the case the Dataset's Check Column is needed, then we set isCheck to true
+	 * Maps Dataset the VO In the case the Dataset's Check Column is needed,
+	 * then we set isCheck to true
+	 * 
 	 * @param dataList
-	 * 			MiPlatform Dataset
+	 *            MiPlatform Dataset
 	 * @param vo
-	 * 			Server Side VO
+	 *            Server Side VO
 	 * @param isCheck
-	 * 			when check column is needed, then true
+	 *            when check column is needed, then true
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
@@ -336,102 +353,114 @@ public class MiPMapper {
 		Map<String, Object> propertyMap = setParameterMap(vo);
 		setupColumnInfo(propertyMap, dataList, true, 0, isCheck);
 	}
-	
+
 	/**
 	 * Maps to Dataset the List consisting of the Value Object
+	 * 
 	 * @param dataList
-	 * 			MiPlatform Dataset
+	 *            MiPlatform Dataset
 	 * @param voList
-	 * 			List consisting of Value Object
+	 *            List consisting of Value Object
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
 	 */
+	@SuppressWarnings("unused")
 	private static void populate(Dataset dataList, List voList) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		populate(dataList, voList, false);
-		
+
 	}
-	
+
 	/**
 	 * <p>
-     * This method converts Value Object(VO) List into Dataset(MiPlatform).
-     * <p>
+	 * This method converts Value Object(VO) List into Dataset(MiPlatform).
+	 * <p>
+	 * 
 	 * @param dataList
-	 * 			MiPlatform Dataset
+	 *            MiPlatform Dataset
 	 * @param voList
-	 * 			List consisting of Value Object
+	 *            List consisting of Value Object
 	 * @param isCheck
-	 * 			
+	 * 
 	 * @throws IllegalAccessException
 	 * @throws InvocationTargetException
 	 * @throws NoSuchMethodException
 	 */
-	private static void populate(Dataset dataList, List voList, boolean isCheck) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		if(voList.size() == 0) return;
+	private static void populate(Dataset dataList, List voList, boolean isCheck) throws IllegalAccessException, InvocationTargetException,
+			NoSuchMethodException {
+		if (voList.size() == 0)
+			return;
 		Map<String, Object> propertyMap = setParameterMap(voList.get(0));
 		setupColumnInfo(propertyMap, dataList, true, 0, isCheck);
-		for(int i=1; i< voList.size();i++){
+		for (int i = 1; i < voList.size(); i++) {
 			propertyMap = setParameterMap(voList.get(i));
-			setupColumnInfo(propertyMap, dataList, false, i, isCheck);		
+			setupColumnInfo(propertyMap, dataList, false, i, isCheck);
 		}
 	}
+
 	/**
-	 * Setting the value with respect to column after setting the column name of Dataset the 
-         * Value Object(VO)'s attribute name
-	 * if isCheck is true, the '_chk' column name is addtionally created.
+	 * Setting the value with respect to column after setting the column name of
+	 * Dataset the Value Object(VO)'s attribute name if isCheck is true, the
+	 * '_chk' column name is addtionally created.
+	 * 
 	 * @param propertyMap
-	 * 			The map consisting of the value object's attribute name and value
+	 *            The map consisting of the value object's attribute name and
+	 *            value
 	 * @param dataList
-	 * 			The dataset mappping the Value Object
+	 *            The dataset mappping the Value Object
 	 * @param addColumnInfo
-	 * 			We set the column info when called the first time because we can
-         * create the column name when the dataset is created the first time.
-	 * 			Set the column info Column
+	 *            We set the column info when called the first time because we
+	 *            can create the column name when the dataset is created the
+	 *            first time. Set the column info Column
 	 * @param rowNumber
-	 * 			the row number of record for settingthe column name
+	 *            the row number of record for settingthe column name
 	 * @param isCheck
-	 * 			If the check field is need, then true
+	 *            If the check field is need, then true
 	 */
-	private static void setupColumnInfo(Map<String, Object> propertyMap, Dataset dataList, boolean addColumnInfo, int rowNumber, boolean isCheck){
-	        int row = rowNumber;
-		Iterator variableIterator =  propertyMap.entrySet().iterator();
+	private static void setupColumnInfo(Map<String, Object> propertyMap, Dataset dataList, boolean addColumnInfo, int rowNumber, boolean isCheck) {
+		int row = rowNumber;
+		Iterator variableIterator = propertyMap.entrySet().iterator();
 		String key = null;
 		Object value = null;
 		Variant variant = null;
-		if (addColumnInfo && isCheck) dataList.addColumn("_chk", ColumnInfo.COLTYPE_STRING, 255);
-		while(variableIterator.hasNext()){
-			try{
-				Map.Entry entry = (Map.Entry)variableIterator.next();
-				key = (String)entry.getKey();
+		if (addColumnInfo && isCheck)
+			dataList.addColumn("_chk", ColumnInfo.COLTYPE_STRING, 255);
+		while (variableIterator.hasNext()) {
+			try {
+				Map.Entry entry = (Map.Entry) variableIterator.next();
+				key = (String) entry.getKey();
 				value = entry.getValue();
-				if(addColumnInfo) dataList.addColumn(key, getDsType(value), 255);
+				if (addColumnInfo)
+					dataList.addColumn(key, getDsType(value), 255);
 				variant = new Variant();
 				variant.setObject(value);
-				if( row == rowNumber ){
-				    dataList.appendRow();
+				if (row == rowNumber) {
+					dataList.appendRow();
 				}
-				dataList.setColumn(rowNumber,key, variant);
+				dataList.setColumn(rowNumber, key, variant);
 				row++;
-			}catch(Exception e){
+			} catch (Exception e) {
 				continue;
 			}
-			
+
 		}
-		
+
 	}
-	
+
 	/**
-	 * Called when obtaining the column type of dataset mapping in the data type of the Value Object
+	 * Called when obtaining the column type of dataset mapping in the data type
+	 * of the Value Object
+	 * 
 	 * @param value
-	 * 			data type
-	 * @return
-	 * 			The column type of dataset mapping in data type of value object.
+	 *            data type
+	 * @return The column type of dataset mapping in data type of value object.
 	 */
 	private static short getDsType(Object value) {
 		short type = ColumnInfo.COLTYPE_STRING;
-		if(value == null) return type;
+		if (value == null)
+			return type;
 		String t = value.getClass().getName();
-		
+
 		if (t.equals(Long.class.getName())) {
 			type = ColumnInfo.COLTYPE_LONG;
 		} else if (t.equals(Integer.class.getName())) {
@@ -446,9 +475,9 @@ public class MiPMapper {
 
 		return type;
 	}
-	
-	private static Object getDatasetColumnValue(Dataset dataset, int rowCount,
-			String columnName, short columnType) {
+
+	@SuppressWarnings("unused")
+	private static Object getDatasetColumnValue(Dataset dataset, int rowCount, String columnName, short columnType) {
 		Object value = null;
 
 		switch (columnType) {
@@ -467,25 +496,26 @@ public class MiPMapper {
 
 		return value;
 	}
-	
+
 	/**
-	 * Returns by saving in the map the appropriate value and the Value Object(VO)'s Attribute Name
+	 * Returns by saving in the map the appropriate value and the Value
+	 * Object(VO)'s Attribute Name
+	 * 
 	 * @param vo
-	 * 			Server Side Value Object
-	 * @return
-	 * 			java.util.Map
+	 *            Server Side Value Object
+	 * @return java.util.Map
 	 */
-	private static Map<String, Object> setParameterMap(Object vo){
+	private static Map<String, Object> setParameterMap(Object vo) {
 		Class<? extends Object> cls = vo.getClass();
 		Field[] field = ReflectionHelp.getAllDeclaredFields(cls);
-		
+
 		AccessibleObject.setAccessible(field, true);
-		
-		HashMap<String, Object> propertyMap = new HashMap<String, Object>(); 
-		for ( int i = 0 ; i < field.length ; i ++ ){
-			try{
-				propertyMap.put( field[i].getName(), ReflectionHelp.getFieldValue(field[i], vo ));
-			}catch(Exception e){
+
+		HashMap<String, Object> propertyMap = new HashMap<String, Object>();
+		for (int i = 0; i < field.length; i++) {
+			try {
+				propertyMap.put(field[i].getName(), ReflectionHelp.getFieldValue(field[i], vo));
+			} catch (Exception e) {
 				continue;
 			}
 		}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +88,7 @@ public class VariableListPropertyValue extends MutablePropertyValues {
 	 *			When changing to CamelCase the VariableList's key, then true
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private static Map getVariableMap(VariableList variableList, boolean convertToCamelCase){
 		Map variableMap = variableList.getVariableMap();
 		Map returnMap = new HashMap();
@@ -130,6 +131,7 @@ public class VariableListPropertyValue extends MutablePropertyValues {
 	 * 			when changing to CamelCase the column name, then true.
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private static Map getVariableMap(Dataset dataList, int rowNum, boolean isDeleted, boolean convertToCamelCase){
 		int columnCount = dataList.getColumnCount();
 		Map returnMap = new HashMap();

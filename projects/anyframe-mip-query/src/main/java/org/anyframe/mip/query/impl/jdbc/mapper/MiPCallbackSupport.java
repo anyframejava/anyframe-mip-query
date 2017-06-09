@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,17 @@
  */
 package org.anyframe.mip.query.impl.jdbc.mapper;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.anyframe.query.QueryInfo;
-import org.anyframe.query.impl.Pagination;
-import org.anyframe.query.impl.config.loader.SQLLoader;
 import org.anyframe.query.ria.AbstractCallbackSupport;
 
 import com.tobesoft.platform.data.ColumnInfo;
 import com.tobesoft.platform.data.Dataset;
 
 /**
+ * Callback support class
+ * 
  * @author Soyon Lim
  * @author JongHoon Kim
  */

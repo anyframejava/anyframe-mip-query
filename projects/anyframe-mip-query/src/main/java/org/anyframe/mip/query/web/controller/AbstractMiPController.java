@@ -1,5 +1,5 @@
 /*
- * Copyright 2002-2008 the original author or authors.
+ * Copyright 2002-2012 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package org.anyframe.mip.query.web.controller;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
 
@@ -45,7 +45,7 @@ import com.tobesoft.platform.data.Variant;
 public abstract class AbstractMiPController extends AbstractController {
 	private int dataFormat = PlatformRequest.XML;
 	
-	protected Log logger=LogFactory.getLog(AbstractMiPController.class);
+	protected Logger logger = LoggerFactory.getLogger(AbstractMiPController.class);
 	
 	private String charset = "utf-8";
 
@@ -87,7 +87,8 @@ public abstract class AbstractMiPController extends AbstractController {
 	 */
 	public ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
-		logger.debug(this.getClass().getName() + " process() Started!");
+		logger.debug("{} process() Started!", new Object[] { this.getClass()
+				.getName() });
 		VariableList inVl = null;
 		DatasetList inDl = null;
 		VariableList outVl = null;
@@ -107,25 +108,21 @@ public abstract class AbstractMiPController extends AbstractController {
 			outVl = new VariableList();
 			outDl = new DatasetList();
 
-			if( logger.isDebugEnabled() ){
-				logger.debug(
-						this.getClass().getName() + "." + "operate()" + " started");
-				logger.debug("Input VariableList");
-				inVl.printVariables();
-				logger.debug("Input DatasetList");
-				inDl.printDatasets();
-			}
+			logger.debug("{}.operate() started", new Object[] { this.getClass()
+					.getName() });
+			logger.debug("Input VariableList");
+			inVl.printVariables();
+			logger.debug("Input DatasetList");
+			inDl.printDatasets();
 			
 			operate(platformRequest, inVl, inDl, outVl, outDl);
 			
-			if( logger.isDebugEnabled() ){
-				logger.debug(
-						this.getClass().getName() + "." + "operate()" + " ended");
-				logger.debug("Output VariableList");
-				outVl.printVariables();
-				logger.debug("Output DatasetList");
-				outDl.printDatasets();
-			}
+			logger.debug("{}.operate() ended", new Object[] { this.getClass()
+					.getName() });
+			logger.debug("Output VariableList");
+			outVl.printVariables();
+			logger.debug("Output DatasetList");
+			outDl.printDatasets();
 			
 			setResultMessage(outVl, 0, "save successed");
 
@@ -140,7 +137,8 @@ public abstract class AbstractMiPController extends AbstractController {
 		} finally {
 			platformResponse.sendData(outVl, outDl);
 		}
-		logger.debug(this.getClass().getName() + " process() end!");
+		logger.debug("{} process() end!", new Object[] { this.getClass()
+				.getName() });
 		return null;
 	}
 
