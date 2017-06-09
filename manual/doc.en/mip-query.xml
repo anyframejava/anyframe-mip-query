@@ -38,7 +38,7 @@
 			<year>2007-2011</year>
 			<holder>Samsung SDS</holder>
 		</copyright>
-		<releaseinfo>Version 1.0.0</releaseinfo>
+		<releaseinfo>Version 1.0.2</releaseinfo>
 
 		<productname>Anyframe MiP Query Plugin</productname>
 
@@ -67,19 +67,19 @@
 		<title>Introduction</title>
 		<partintro id="mip_query_installation_part_intro">
 			<para>
-				MiPlatform은 X-internet 기반의 RIA 개발 플랫폼으로 국내에서 각광을 받고 있다. 
-				이에 Anyframe에서는 MiPlatform을 기반으로 어플리케이션 개발 시에 MiPlatform 전용 데이터 타입 처리를 위해서 MiPQueryService와 MiPController를 제공하고 있다. 
-				mip-query plugin은 Anyframe에서 제공하는 MiPlatform 연계 모듈인 MiPQueryService와 MiPController의 기본적인 활용 방법을 가이드하기 위한 샘플 코드와 이를 위해 
-				필요한 참조 라이브러리들로 구성되어 있다.
-				Anyframe에서는 MiPlatform을 기반으로  어플리케이션 개발 시에 서버측 코딩을 전혀 하지 않고도 기본 CRUD 기능을 구현할 수 
-				있도록 도와주는 공통 서버 모듈을 제공한다. mip-query plugin은 이러한 공통 서버 모듈을 활용하여 현장에서 사용 빈도가 높은 MiPlatform 기반의 UI를 유형별로 구현한 샘플 어플리케이션이 
-				포함되어 있다.
+				MiPlatform is receiving spotlight domestically as a RIA development platform based on X-internet. 
+				Thus, Anyframe provides MiPQueryService and MiPController to process data dedicated to MiPlatform when applications are developed based on MiPlatform. 
+				mip-query plugin is composed of sample codes to guide basic usage of MiPQueryService and MiPController, the models connected with MiPlatform provided by Anyframe  
+				and necessary libraries.
+				Anyframe provides common server modules to help implement basic CRUD functions without coding at all on the server side when applications are developed based on MiPlatform. 
+				The mip-query plugin includes sample applications which created MiPlatform-based UI, which are frequently used in the field, for each type using the common server modules.  
+				
 			</para>
 			<para role="introduction_title"><emphasis role="bold">Installation</emphasis></para>
-			<para>Command 창에서 다음과 같이 명령어를 입력하여 mip-query plugin을 설치한다.</para>
+			<para>Install mip-query plugin by entering the following command in the Command window.</para>
 			<programlisting language="java"><![CDATA[mvn anyframe:install -Dname=mip-query]]></programlisting>
 			<para>
-				installed(mvn anyframe:installed) 혹은 jetty:run(mvn clean jetty:run) command를 이용하여 설치 결과를 확인해볼 수 있다. 
+				The installation result can be checked by using the installed (mvn anyframe:installed) or the jetty:run (mvn clean jetty:run) commands. 
 			</para>
 			<para role="introduction_title"><emphasis role="bold">Dependent Plugins</emphasis></para>
 			<informaltable>
@@ -94,11 +94,7 @@
 					</thead>
 					<tbody>
 						<row>
-							<entry align="center"><ulink url="http://dev.anyframejava.org/docs/anyframe/plugin/core/1.0.0/reference/htmlsingle/core.html">core</ulink></entry>
-							<entry align="center" valign="middle">2.0.0 > *</entry>
-						</row>
-						<row>
-							<entry align="center"><ulink url="http://dev.anyframejava.org/docs/anyframe/plugin/query-ria/1.0.0/reference/htmlsingle/query-ria.html">query-ria</ulink></entry>
+							<entry align="center"><ulink url="http://dev.anyframejava.org/docs/anyframe/plugin/optional/query-ria/1.0.1/reference/htmlsingle/query-ria.html">query-ria</ulink></entry>
 							<entry align="center" valign="middle">2.0.0 > *</entry>
 						</row>
 					</tbody>
@@ -111,7 +107,7 @@
 		<title>Miplatform Integration</title>
 		<partintro id="mip_query_integration_part_intro">
 			<para>
-				Anyframe provides MiPQueryService and AnyframeMiPController to easily and conveniently connect with MiPlatform 
+				Anyframe provides MiPQueryService and AbstractMiPController to easily and conveniently connect with MiPlatform 
 				that is a RIA development platform.
 			</para>
 		</partintro>
@@ -139,19 +135,17 @@
 		<title>MiPlatform UI Sample</title>
 		<partintro id="mipsample_mipuisample_part_intro">
 			<para>
-				Java EE 어플리케이션 개발 프레임워크인 Anyframe Java와 RIA UI 개발 플랫폼인 MiPlatform에 대한 연계 방안을 제시함으로써 
-				Anyframe Java와 함께 MiPlatform을 기반으로 어플리케이션을 개발하는 프로젝트에 효과적인 개발 방법을 제안하고자 한다. 
-				프로젝트 초기에 개발 템플릿을 정의하는데 소요되는 시간을 줄이고자, 
-				참조할 수 있는 MiPlatform 화면 샘플 및 Eclipse 프로젝트 샘플을 제공하고, 
-				설치에서부터 구현 기능 및 적용 방법에 대한 설명을 하고자 한다
+				We try to suggest effective ways for development for apllication development projects based on MiPlatform along with Anyframe Java by suggesting the way to use Anyframe Java, which is a Java EE application development framework and MiPlatform, an RIA UI development platform in connection. 
+				To reduce the time required to define development templates in the beginning of projects, 
+				We will provide MiPlatform screen samples and Eclipse project samples that can be referred to,  
+				and explain from installation to implementation functions and ways to apply them.
 			</para>
 			<para>
-				Anyframe MiPlatform UI Sample은 최근 Rich User Experience 실현을 위해서 많이 사용되고 있는 UI 개발 플랫폼 중 하나인 
-				MiPlatform 을 사용하여 UI를 개발할 때, Anyframe 기반으로 Jave EE 어플리케이션을 개발하는 방법을 보여주고, 
-				Anyframe과 MiPlatform을 사용하여 진행되었던 몇몇 프로젝트에서 추출한 기본적인 화면들을 구현하여 샘플로 제공하고 있다. 
-				기존에 Anyframe Community Portal을 통해 제공된 MiPlatform Sample과의 차이점은 
-				단순 CRUD 기능에 대해서 불필요한 중복 코딩을 제거하기 위해 공통 Controller, 공통 Service 등으로 구성된 공통 모듈, 
-				Anyframe Ria MiPlatform 을 사용한다는 것이다.
+				Anyframe MiPlatform UI Sample shows how to develop Java EE applications based on Anyframe when UIs are developed using MiPlatform, which is one of UI development platforms that are used frequently these days to realize Rich User Experience,  
+				and provides samples of basic pages extracted from some projects that used Anyframe and MiPlatform. 
+				The difference with MiPlatform samples provided through Anyframe Community Portal in the past is  
+				that it uses Anyframe Ria MiPlatform, a common modue composed of a common Controller, a common Service, etc. to eliminate unnecessarily overlapping coding for simple CRUD functions. 
+				
 			</para>
 		</partintro>
 		&mip_query_mipuisample_architecture;

@@ -74,8 +74,7 @@
 			<para>
 				다음은 앞서 정의한 MiPQueryService가 참조하는 RiaQueryService Bean을 통해 로드된 mapping-mip-query-movie.xml 
 				파일의 일부로, Named Parameter를 이용한 쿼리문들을 포함하고 있다.
-				<programlisting language="xml"><![CDATA[<queries>
-<query id="createMovie" isDynamic="true" mappingStyle="upper">
+				<programlisting language="xml"><![CDATA[<query id="createMovie" isDynamic="true" mappingStyle="upper">
 	<statement>
 		INSERT INTO 
 		MOVIE (MOVIE_ID, TITLE, DIRECTOR, GENRE_ID, ACTORS, RUNTIME, RELEASE_DATE, TICKET_PRICE, NOW_PLAYING, POSTER_FILE)
@@ -139,98 +138,98 @@
 				다음에서는 MiPQueryService를 이용하여 앞서 언급한 매핑 XML 파일에 정의된 INSERT, SELECT, UPDATE, DELETE 쿼리문을 
 				실행하는 테스트 코드의 일부이다.
 				<programlisting language="java">/**
- * MiPlatform용 Query 서비스를 통해 DB에 신규 데이터를 입력하는 테스트 코드
+ * Test code that enters new data in DB through Query service for MiPlatform
  */    
 public void insertDataSet() throws Exception {
-    MiPQueryService mipQueryService = (MiPQueryService) context.getBean("mipQueryService");
+    IMiPQueryService mipQueryService = (IMiPQueryService) context.getBean("mipQueryService");
 
     Map queryMap = new HashMap();
-    queryMap.put(MiPQueryService.QUERY_INSERT, "createMovie");
+    queryMap.put(IMiPQueryService.QUERY_INSERT, "createProduct");
 
-    // INSERT, UPDATE, DELETE 유형별로 사용할 query id를 정의한 Map과 DB에 반영해야 할 
-    // Dataset을 전달. Dataset에는 다수의 데이터를 저장할 수 있음.
+    // Transfer Dataset that should be reflected in map and DB which defines query id that will be used by INSERT, UPDATE, DELETE type.
+    // A large amount of data can be saved in Dataset.
     int resultInsert =
-            <emphasis role="bold">mipQueryService.update(queryMap, makeMovie());</emphasis>
+            <emphasis role="bold">mipQueryService.update(queryMap, makeProduct());</emphasis>
 }
 
 /**
- * MiPlatform용 Query 서비스를 통해 DB에 입력된 데이터를 수정하는 테스트 코드
+ * Test code that modifies data in DB through Query service for MiPlatform
  */   
 public void updateDataSet() throws Exception {
-    MiPQueryService mipQueryService =
-            (MiPQueryService) context.getBean("mipQueryService");
+    IMiPQueryService mipQueryService =
+            (IMiPQueryService) context.getBean("mipQueryService");
 
     Map queryMap = new HashMap();
-    queryMap.put(MiPQueryService.QUERY_UPDATE, "updateMovie");
+    queryMap.put(IMiPQueryService.QUERY_UPDATE, "updateProduct");
     
-    // INSERT, UPDATE, DELETE 유형별로 사용할 query id를 정의한 Map과 DB에 반영해야 할 
-    // Dataset을 전달. Dataset에는 다수의 데이터를 저장할 수 있음.    
+    // Transfer Dataset that should be reflected in map and DB which defines query id that will be used by INSERT, UPDATE, DELETE type.
+    // A large amount of data can be saved in Dataset.  
     int resultUpdate =
-           <emphasis role="bold">mipQueryService.update(queryMap, makeMovie());</emphasis>
+            <emphasis role="bold">mipQueryService.update(queryMap, makeProduct());</emphasis>
 }
 
 /**
- * MiPlatform용 Query 서비스를 통해 DB에 데이터를 입력/수정/삭제하는 테스트 코드
+ * Test code for INSERT, UPDATE, DELETE of data in DB through query service for MiPlatform
  */    
 public void processAllDataSet() throws Exception {
-    MiPQueryService mipQueryService =
-            (MiPQueryService) context.getBean("mipQueryService");
+    IMiPQueryService mipQueryService =
+            (IMiPQueryService) context.getBean("mipQueryService");
 
     Map queryMap = new HashMap();
-    queryMap.put(MiPQueryService.QUERY_UPDATE, "updateMovie");
-    queryMap.put(MiPQueryService.QUERY_INSERT, "createMovie");
-    queryMap.put(MiPQueryService.QUERY_DELETE, "removeMovie");
+    queryMap.put(IMiPQueryService.QUERY_UPDATE, "updateProduct");
+    queryMap.put(IMiPQueryService.QUERY_INSERT, "createProduct");
+    queryMap.put(IMiPQueryService.QUERY_DELETE, "removeProduct");
     
-    // INSERT, UPDATE, DELETE 유형별로 사용할 query id를 정의한 Map과 DB에 반영해야 할
-    // Dataset을 전달. Dataset에는 다수의 데이터를 저장할 수 있음.            
-    int resultUpdate = <emphasis role="bold">mipQueryService.update(queryMap, makeMovies());</emphasis>
+    // Transfer Dataset that should be reflected in map and DB which defines query id that will be used by INSERT, UPDATE, DELETE type.
+    // A large amount of data can be saved in Dataset.            
+    int resultUpdate = <emphasis role="bold">mipQueryService.update(queryMap, makeProducts());</emphasis>
 }
 
 /**
- * MiPlatform용 Query 서비스를 통해 DB에 데이터를 입력/수정/삭제하는 테스트 코드
- * 이때, ActionCommand를 통해 전후처리 수행
+ * Test code for INSERT, UPDATE, DELETE of data in DB through query service for MiPlatform
+ * In this case, ActionCommand pre-post processing is executed.
  */    
 public void processAllDataSetWithActionCommand() throws Exception {
-    MiPQueryService mipQueryService =
-            (MiPQueryService) context.getBean("mipQueryService");
+    IMiPQueryService mipQueryService =
+            (IMiPQueryService) context.getBean("mipQueryService");
 
     Map queryMap = new HashMap();
-    queryMap.put(MiPQueryService.QUERY_UPDATE, "updateMovie");
-    queryMap.put(MiPQueryService.QUERY_INSERT, "createMovie");
-    queryMap.put(MiPQueryService.QUERY_DELETE, "removeMovie");
+    queryMap.put(IMiPQueryService.QUERY_UPDATE, "updateProduct");
+    queryMap.put(IMiPQueryService.QUERY_INSERT, "createProduct");
+    queryMap.put(IMiPQueryService.QUERY_DELETE, "removeProduct");
     
-    // INSERT, UPDATE, DELETE 유형별로 사용할 query id를 정의한 Map, DB에 반영해야 할 
-    // Dataset, DB에 접근하기 전과 후에 처리해야 할 작업을 정의한 ActionCommand를 전달
-    // Dataset에는 다수의 데이터를 저장할 수 있음.     
+    // Transfer ActionCommand which defines process that should be done before and after accessing Dataset and DB
+    // that should be reflected in Map, DB which defines query id used according to INSERT, UPDATE, DELETE type.
+    // A large amount of data can be saved in Dataset.     
     int resultUpdate =
-            <emphasis role="bold">mipQueryService.update(queryMap, makeMovies(),
-            new MoviceActionCommand());</emphasis>
+            <emphasis role="bold"> mipQueryService.update(queryMap, makeProducts(),
+            new ProductActionCommand()</emphasis>);
 }
 
 /**
- * MiPlatform용 Query 서비스를 통해 DB에 데이터를 조회하는 테스트 코드
- * 이때, 검색조건은 VariableList 형태임
+ * Test code for searching data in DB through query service for MiPlatform
+ * In this case, search conditions are in VariableList form.
  */     
 public void findDataSetWithVariant() throws Exception {
-    MiPQueryService mipQueryService =
-            (MiPQueryService) context.getBean("mipQueryService");
+    IMiPQueryService mipQueryService =
+            (IMiPQueryService) context.getBean("mipQueryService");
 
-    // 실행할 query id와 VariableList 형태의 검색 조건을 전달
+    // Transfer query id to be executed, and search conditions in VariableList form
     Dataset resultDataSet =
-            <emphasis role="bold">mipQueryService.search("findMovieByPk", makeVariantList());</emphasis>
+            <emphasis role="bold">mipQueryService.search("findProductByPk", makeVariantList());</emphasis>
 }
 
 /**
- * MiPlatform용 Query 서비스를 통해 DB에 데이터를 조회하는 테스트 코드
- * 이때, 검색조건은 Dataset 형태임
+ * Test code to search data in DB through query service for MiPlatform
+ * In this case, search conditions are in Dataset form.
  */    
 public void findListDataSet(int expected) throws Exception {
-    MiPQueryService mipQueryService =
-            (MiPQueryService) context.getBean("mipQueryService");
+    IMiPQueryService mipQueryService =
+            (IMiPQueryService) context.getBean("mipQueryService");
     
-    // 실행할 query id와 Dataset 형태의 검색 조건을 전달    
+    // Transfer query id to be executed and search conditions in Dataset form.    
     Dataset resultDataSet =
-            <emphasis role="bold">mipQueryService.search("findMovieList",
+            <emphasis role="bold">mipQueryService.search("findProductList",
             makeSearchCondition());</emphasis>
 }</programlisting>
 			</para>

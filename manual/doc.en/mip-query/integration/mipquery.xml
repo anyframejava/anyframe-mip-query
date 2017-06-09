@@ -22,7 +22,7 @@
 			<title>Notes for Pagination</title>
 			<para>
 				After RiaQueryService 4.1.0, PagingSQLGenerator appropriate for DBMS should be set up for property definition. 
-				When appropriate PagingSQLGenerator does no exist, anyframe.core.query.impl.jdbc.generator.DefaultPagingSQLGenerator provided by Query Service can be used, 
+				When appropriate PagingSQLGenerator does no exist, org.anyframe.query.impl.jdbc.generator.DefaultPagingSQLGenerator provided by Query Service can be used, 
 				but when executing findXXX() method using DefaultPagingSQLGenerator, 
 				data on a specific page can be searched by moving  ResultSet cursor after fetching all data related to conditions within QueryService. 
 				In this case, logic to move ResultSet cursor may take long and seriously impact performance when searching for a large amount of data. 
@@ -36,29 +36,34 @@
 			<para>
 				The following is a part of context-miplatform-query.xml file defining MiPQueryService. 
 				Because MiPQueryService internally processes data access through RiaQueryService, referenced relationship should be defined for RiaQueryService.
-				<programlisting language="xml"><![CDATA[<bean id="mipQueryService" 
-        class="anyframe.core.query.ria.mip.impl.MiPQueryServiceImpl">
-    <property ]]><emphasis role="bold">name="riaQueryService" ref="riaQueryService"</emphasis><![CDATA[/>
-</bean> 
+				<programlisting language="xml"><![CDATA[<bean id="mipQueryService" class="org.anyframe.mip.query.impl.MiPQueryServiceImpl">
+	<property name="namedParamJdbcTemplate" ref="pagingNamedParamJdbcTemplate"/>
+	<property name="lobHandler" ref="lobHandler"/>
+	<property name="sqlRepository" ref="sqlLoader"/>
+	<lookup-method name="getRowCallbackHandler" bean="rowCallbackHandler"/>
+	<lookup-method name="getCallableStatementCallbackHandler" bean="callableStatementCallbackHandler"/>
+	<lookup-method name="getPrintWriterRowCallbackHandler" bean="printWriterRowCallbackHandler"/>
+</bean>	
 
-<bean name="riaQueryService" class="anyframe.core.query.ria.impl.RiaQueryServiceImpl">
-    <property name="jdbcTemplate" ref="pagingNamedParamJdbcTemplate"/>
-    <property name="sqlRepository" ref="mipSqlLoader"/>
-    ...
-</bean>
-
-<bean id="pagingNamedParamJdbcTemplate" 
-        class="anyframe.core.query.impl.jdbc.PagingNamedParamJdbcTemplate">
-    <constructor-arg index="0" ref="pagingJdbcTemplate"/>
+<bean id="callableStatementCallbackHandler" class="org.anyframe.mip.query.impl.jdbc.mapper.MiPCallableStatementCallbackHandler" scope="prototype"/>
+	
+<bean id="rowCallbackHandler" class="org.anyframe.mip.query.impl.jdbc.mapper.MiPDataSetCallbackHandler" scope="prototype"/>
+	
+<bean id="printWriterRowCallbackHandler" class="org.anyframe.mip.query.impl.jdbc.mapper.MiPPrintWriterCallbackHandler" scope="prototype"/>
+	
+<!-- The original JdbcTemplate definition -->
+<bean id="pagingNamedParamJdbcTemplate" class="org.anyframe.query.impl.jdbc.PagingNamedParamJdbcTemplate">
+  	<constructor-arg index="0" ref="pagingJdbcTemplate"/>
     <constructor-arg index="1" ref="dataSource"/>
-</bean>
-
-<bean id="pagingJdbcTemplate"
-        class="anyframe.core.query.impl.jdbc.PagingJdbcTemplate">
+</bean> 
+    
+<bean id="pagingJdbcTemplate" class="org.anyframe.query.impl.jdbc.PagingJdbcTemplate">
     <constructor-arg ref="dataSource"/>
     <property name="exceptionTranslator" ref="exceptionTranslator"/>
-    <property name="paginationSQLGetter" ref="pagingSQLGenerator"/>	
-</bean>]]></programlisting>
+    <property name="paginationSQLGetter" ref="pagingSQLGenerator"/>
+</bean>
+    
+<bean id="pagingSQLGenerator" class="org.anyframe.query.impl.jdbc.generator.OraclePagingSQLGenerator"/>]]></programlisting>
 			</para>
 		</section>
 
@@ -68,64 +73,60 @@
 			<para>
 				The following shows part of mapping-query-mip.xml loaded by RiaQueryService bean referenced by MipQueryService. 
 				It includes SQL statements that use 'named parameter'.
-				<programlisting language="xml"><![CDATA[<queries>
-    <query id="createProduct" isDynamic="true" mappingStyle="upper">
-        <statement>
-            INSERT INTO PRODUCT ( 			
-                PROD_NO, AS_YN, CATEGORY_NO, IMAGE_FILE, MANUFACTURE_DAY, 
-                PROD_DETAIL, PROD_NAME, REG_DATE, SELL_AMOUNT, SELL_QUANTITY, SELLER_ID) 
-            VALUES (:PROD_NO, :AS_YN, :CATEGORY_NO, :IMAGE_FILE, :MANUFACTURE_DAY, 
-                :PROD_DETAIL, :PROD_NAME, sysdate, :SELL_AMOUNT, :SELL_QUANTITY, :SELLER_ID)
-        </statement>
-    </query>
-		
-    <query id="updateProduct" isDynamic="true" mappingStyle="upper">
-        <statement>
-            UPDATE PRODUCT
-            SET 
-                PROD_NAME = :PROD_NAME, PROD_DETAIL = :PROD_DETAIL,
-                MANUFACTURE_DAY = :MANUFACTURE_DAY, AS_YN = :AS_YN, 
-                IMAGE_FILE = :IMAGE_FILE, SELL_QUANTITY = :SELL_QUANTITY,   
-                SELL_AMOUNT = :SELL_AMOUNT, CATEGORY_NO = :CATEGORY_NO
-            WHERE
-                PROD_NO = :PROD_NO 
-        </statement>
-    </query>
-	
-    <query id="removeProduct" isDynamic="true" mappingStyle="upper"> 
-        <statement>
-            DELETE FROM PRODUCT 
-            WHERE 
-                PROD_NO = :PROD_NO
-        </statement>
-    </query>
-	
-    <query id="findProductByPk" isDynamic="true" mappingStyle="upper">
-        <statement>
-            SELECT 
-                PROD_NO, AS_YN, CATEGORY_NO, IMAGE_FILE, MANUFACTURE_DAY, 
-                PROD_DETAIL, PROD_NAME, REG_DATE, SELL_AMOUNT, SELL_QUANTITY, 
-                SELLER_ID
-            FROM PRODUCT
-            WHERE 
-                PROD_NO = :PROD_NO
-        </statement>							
-    </query>
+				<programlisting language="xml"><![CDATA[<query id="createMovie" isDynamic="true" mappingStyle="upper">
+	<statement>
+		INSERT INTO 
+		MOVIE (MOVIE_ID, TITLE, DIRECTOR, GENRE_ID, ACTORS, RUNTIME, RELEASE_DATE, TICKET_PRICE, NOW_PLAYING, POSTER_FILE)
+		VALUES (:MOVIE_ID, :TITLE, :DIRECTOR, :GENRE_ID, :ACTORS, :RUNTIME, :RELEASE_DATE, :TICKET_PRICE, :NOW_PLAYING, :POSTER_FILE)
+	</statement>
+</query>
 
-    <query id="findProductList" isDynamic="true" mappingStyle="upper">
-        <statement>
-            SELECT 
-                PROD_NO, AS_YN, CATEGORY_NO, IMAGE_FILE, MANUFACTURE_DAY, 
-                PROD_DETAIL, PROD_NAME, REG_DATE, SELL_AMOUNT, SELL_QUANTITY, 
-                SELLER_ID 
-            FROM PRODUCT
-            WHERE 		
-                PROD_NAME like '%' || :SEARCH_PROD_NAME || '%'
-                AND	AS_YN = :SEARCH_AS_YN 
-            ORDER BY PROD_NO
-        </statement>		
-    </query>
-</quereis>]]></programlisting>
+<query id="updateMovie" isDynamic="true" mappingStyle="upper">
+	<statement>
+		UPDATE MOVIE
+		SET 
+			TITLE = :TITLE, 
+			DIRECTOR = :DIRECTOR,
+			GENRE_ID = :GENRE_ID, 
+			ACTORS = :ACTORS, 
+			RUNTIME = :RUNTIME, 
+			RELEASE_DATE = :RELEASE_DATE,   
+			TICKET_PRICE = :TICKET_PRICE, 
+			NOW_PLAYING = :NOW_PLAYING
+		WHERE
+			MOVIE_ID = :MOVIE_ID
+	</statement>
+</query>
+
+<query id="removeMovie" isDynamic="true" mappingStyle="upper">
+	<statement>
+		DELETE FROM MOVIE 
+		WHERE 
+			MOVIE_ID = :MOVIE_ID
+	</statement>
+</query>
+
+<query id="findMovieByPk" isDynamic="true" mappingStyle="upper">
+	<statement>
+		SELECT 
+			MOVIE_ID, TITLE, DIRECTOR, GENRE_ID, ACTORS, RUNTIME, RELEASE_DATE, TICKET_PRICE, NOW_PLAYING, POSTER_FILE
+		FROM MOVIE
+		WHERE 
+			MOVIE_ID = :MOVIE_ID
+	</statement>
+</query>
+
+<query id="findMovieList" isDynamic="true" mappingStyle="upper">
+	<statement>
+		SELECT 
+			MOVIE_ID, TITLE, DIRECTOR, GENRE_ID, ACTORS, RUNTIME, RELEASE_DATE, TICKET_PRICE, NOW_PLAYING, POSTER_FILE
+		FROM MOVIE
+		WHERE 		
+			TITLE like '%' || :SEARCH_TITLE || '%'
+			AND	NOW_PLAYING = :SEARCH_NOW_PLAYING 
+		ORDER BY RELEASE_DATE DESC
+	</statement>
+</query>]]></programlisting>
 			</para>
 		</section>
 
@@ -239,63 +240,6 @@ public void findListDataSet(int expected) throws Exception {
 				For example, if new identifier has to be set before entering individual row is newly registered in DB, 
 				extract each row by looping, and simply transfer ActionCommand object that has additions to identifier creation information within preInsert() logic 
 				without separate logic setting identifier.
-			</para>
-		</section>
-	</section>
-
-	<section id="mip_query_integration_mipquery_riaqueryservice">
-		<title>RiaQueryService</title>
-
-		<para>
-			As mentioned above, to reflect user input information in DB, MiPQueryService should use RiaQueryService. 
-			The roles of RiaQuerySerivce and MiPQueryService are as follows.
-		</para>
-
-		<orderedlist>
-			<listitem>
-				<para>
-					MiPQueryService saves input data in ParameterSource 
-					and transfers it to RiaQueryService that executes real data access logic along with individual RowCallbackHandler that will process search results.
-				</para>
-			</listitem>
-
-			<listitem>
-				<para>
-					RiaQueryService calls getValue() method of ParameterSource implemented within MiPQueryService, 
-					sets input value, and executes relevant strings.
-				</para>
-			</listitem>
-
-			<listitem>
-				<para>
-					RiaQueryService calls RowCallbackHandler callback method implemented within MiPQueryService, 
-					and converts search result value into a specific data format that can be used in MiPlatform.
-				</para>
-			</listitem>
-		</orderedlist>
-
-		<para>
-			So, this is a service that is for MiPQueryService internal reference, 
-			rather than a service used by developer directly calling API.
-		</para>
-
-		<section id="mip_query_integration_mipquery_riaqueryservice_attribute">
-			<title>Configuration file sample</title>
-
-			<para>
-				The following is a part of context-query.xml that defines RiaQueryService. 
-				It expands the basic query service of RiaQueryService, 
-				so definition can follow <ulink url="http://dev.anyframejava.org/docs/anyframe/plugin/foundation/4.6.1/reference/htmlsingle/foundation.html#foundation_query_configuration">Query service definition method</ulink>.
-				<programlisting language="xml"> <![CDATA[<bean id="pagingNamedParamJdbcTemplate" 
-        class="anyframe.core.query.impl.jdbc.PagingNamedParamJdbcTemplate">
-    <constructor-arg index="0" ref="pagingJdbcTemplate"/>
-    <constructor-arg index="1" ref="dataSource"/>
-</bean>
-   
-<bean name="riaQueryService" class="anyframe.core.query.ria.impl.RiaQueryServiceImpl">
-    <property name="jdbcTemplate" ref="pagingNamedParamJdbcTemplate"/>
-    <property name="sqlRepository" ref="sqlLoader"/>
-</bean>]]></programlisting>
 			</para>
 		</section>
 	</section>

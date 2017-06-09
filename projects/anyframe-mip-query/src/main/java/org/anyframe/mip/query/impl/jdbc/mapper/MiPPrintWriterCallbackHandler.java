@@ -69,14 +69,14 @@ public class MiPPrintWriterCallbackHandler extends
     }
 
     public void processRow(ResultSet rs) throws SQLException {
-        StringBuffer printString = null;
+    	StringBuilder printString = null;
         if (rowCount == 0) {
             ResultSetMetaData rsmd = rs.getMetaData();
             columnCount = rsmd.getColumnCount();
             columnTypes = new int[rsmd.getColumnCount()];
             fieldNames = new String[rsmd.getColumnCount()];
             columnNames = new String[rsmd.getColumnCount()];
-            printString = new StringBuffer();
+            printString = new StringBuilder();
             for (int i = 0; i < columnCount; i++) {
                 String fieldName = getMappingStylekey(queryInfo, rsmd.getColumnLabel(i + 1));
                 columnTypes[i] = rsmd.getColumnType(i + 1);
@@ -90,7 +90,7 @@ public class MiPPrintWriterCallbackHandler extends
             printString.append("\n");
             writer.write(printString.toString());
         }
-        printString = new StringBuffer();
+        printString = new StringBuilder();
         for (int i = 1; i <= columnCount; i++) {
             printString.append(replaceChar((String) getValues(rs, i, 12)));
             if (i != columnCount)

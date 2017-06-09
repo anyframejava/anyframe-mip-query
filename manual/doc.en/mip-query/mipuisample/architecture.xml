@@ -8,7 +8,7 @@
 	
 	<mediaobject>
 		<imageobject>
-			<imagedata align="center" fileref="../image/mipsample/mipuisample/architecture.png" />
+			<imagedata align="center" fileref="../image/mip-query/mipuisample/architecture.png" />
 		</imageobject>
 	</mediaobject>
 	<para>
@@ -70,18 +70,15 @@
 					Only the login function creates LoginController, so it is defined in common-servlet.xml. 
 					
 					<programlisting language="xml"><![CDATA[<bean name="/mipController.do"
-        class="anyframe.core.ria.mip.web.MiPController">
+        class="org.anyframe.mip.query.web.MiPController">
 </bean>
-<bean name="/loginController.do"
-        class="anyframe.samples.miplatform.security.web.LoginController">
-	<property name="securityService" ref="securityService"/>
-</bean>]]></programlisting>
+<bean name="/mipQueryLogin.do" class="org.anyframe.plugin.mip.query.security.web.LoginController" />]]></programlisting>
 					As seen in the above definition of Controller, in case of the simple CRUD function, 
 					a separate Controller does not have to be implemented and MiPController can be used. 
 					However, if a separate interface with UI such as file upload/download is formed 
 					or a function that is not supported by MiPController is added, 
-					a Controller can be newly developed if needed by developer through inheriting AnyframeMiPController or
-					AnyframeMiPDispatchController. LoginController presented in this sample is an example. 
+					a Controller can be newly developed if needed by developer through inheriting AbstractMiPController or
+					AbstractMiPDispatchController. LoginController presented in this sample is an example. 
 				</para>
 			</listitem>
 		</itemizedlist>
@@ -110,37 +107,19 @@
 			</listitem>
 			<listitem>
 				<para>
-					context-miplatform.xml
+				5 	context-miplatform.xml
 				</para>
 				<para>
 					context-xxx.xml is bean definition file managed by Spring. 
 					context-miplatform.xml defines bean for Common Service and Common Dao of Anyframe Ria MiPlatform.
 					<programlisting language="xml"><![CDATA[<bean name=" mipService"
-        class="anyframe.core.ria.mip.service.impl.MiPServiceImpl">
+        class="org.anyframe.mip.query.service.impl.MiPServiceImpl">
     <constructor-arg ref="mipDao"/>
 </bean>	
 <bean name="mipDao"
-        class="anyframe.core.ria.mip.dao.query.MiPDaoQuery">
+        class="org.anyframe.mip.query.dao.impl.MiPDaoQuery">
     <constructor-arg ref="mipQueryService"/>
 </bean>]]></programlisting>
-				</para>
-			</listitem>
-			<listitem>
-				<para>
-					context-security.xml
-				</para>
-				<para>
-					context-security.xml is the bean definition file to process the login function.
-					<programlisting language="xml"><![CDATA[<bean id="securityService"
-    class="anyframe.samples.miplatform.security.service.impl.DBAuthenticationService">
-    <property name="dataSource" ref="dataSource" />
-    <property name="sqlQuery"
-        value="SELECT USER_ID, PASSWORD, USER_NAME, EN_NAME, COMP_PHONE, PHONE,
-        CELL_PHONE, COMPANY, JOB_POSITION, ASSIGNMENT, OFFICER_YN, FAX, ZIP_CODE,
-        ADDRESS, COMP_ZIP_CODE, COMP_ADDRESS, EMAIL, DEPT_ID
-        FROM MIP_USER WHERE USER_ID = ? AND PASSWORD =?" />
-</bean>]]></programlisting>
-					SQL defined in ‘sqlQuery’ processes user authentication through user table.
 				</para>
 			</listitem>
 		</itemizedlist>

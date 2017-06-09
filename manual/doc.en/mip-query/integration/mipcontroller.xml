@@ -4,8 +4,8 @@
 	<para>
 		When search or save event occurs in Client UI Component while developing using MiPlatform, 
 		the called Controller class executes business service and converts the results into XML. 
-		Anyframe provides AnyframeMiPController for the convenience of developers so that they do not have to be concerned about the complicated conversion logic. 
-    	<programlisting language="xml"><![CDATA[public abstract class AnyframeMiPController extends AbstractController {
+		Anyframe provides AbstractMiPController for the convenience of developers so that they do not have to be concerned about the complicated conversion logic. 
+    	<programlisting language="xml"><![CDATA[public abstract class AbstractMiPController extends AbstractController {
   // ...
   public ModelAndView handleRequestInternal(HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
@@ -50,8 +50,8 @@
 	</para>
 
     <para>
-    	AnyframeMiPController overrides the process() method of AnyframeFormController and calls operate() method. 
-    	When developer inherits AnyframeMiPController and develops user defined controller, real coding can be implemented within operate() method.
+    	AbstractMiPController는 AbstractController의 handleRequestInternal 메소드를 구현드 하고 있고 operate 메소드를 호출한다. 
+    	When developer inherits AbstractMiPController and develops user defined controller, real coding can be implemented within operate() method.
     </para>
 
     <itemizedlist>
@@ -116,7 +116,7 @@
         		When using MiPlatform, page is not moved, 
         		and only Dataset XML which is a result related to search or save event is transferred.
         		The developer should set the view name at null for moving page when operate method is implemented. 
-        		When developer inherits AnyframeMiPController to develop Controller, business service within operate method should be executed to convert result value.
+        		When developer inherits AbstractMiPController to develop Controller, business service within operate method should be executed to convert result value.
         	</para>
 		</listitem>
 	</itemizedlist>

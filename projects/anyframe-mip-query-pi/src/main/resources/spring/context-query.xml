@@ -9,4 +9,4 @@
 	<query:auto-config dbType="hsqldb"/>
 	<!--query-config-END-->
 
-</beans>		
+</beans>

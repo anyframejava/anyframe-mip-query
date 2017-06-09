@@ -287,7 +287,7 @@
 			<mediaobject>
           		<imageobject>
            			<imagedata align="center"
-                       	fileref="../image/mipsample/mipuisample/dsservice.png" />
+                       	fileref="../image/mip-query/mipuisample/dsservice.png" />
           		</imageobject>
         	</mediaobject>
 		</section>
@@ -312,7 +312,7 @@
 				<mediaobject>
 	          		<imageobject>
 	           			<imagedata align="center"
-	                       	fileref="../image/mipsample/mipuisample/newform.png" />
+	                       	fileref="../image/mip-query/mipuisample/newform.png" />
 	          		</imageobject>
 	        	</mediaobject>
 	        	<para></para>
@@ -324,7 +324,7 @@
         		<mediaobject>
 	          		<imageobject>
 	           			<imagedata align="center"
-	                       	fileref="../image/mipsample/mipuisample/select.png" />
+	                       	fileref="../image/mip-query/mipuisample/select.png" />
 	          		</imageobject>
 	        	</mediaobject>	
         	</listitem>
@@ -336,7 +336,7 @@
         		<mediaobject>
 	          		<imageobject>
 	           			<imagedata align="center"
-	                       	fileref="../image/mipsample/mipuisample/form.png" />
+	                       	fileref="../image/mip-query/mipuisample/form.png" />
 	          		</imageobject>
 	        	</mediaobject>
 	        	<para></para>
@@ -350,7 +350,7 @@
         		<mediaobject>
 	          		<imageobject>
 	           			<imagedata align="center"
-	                       	fileref="../image/mipsample/mipuisample/dataset.png"/>
+	                       	fileref="../image/mip-query/mipuisample/dataset.png"/>
 	          		</imageobject>
 	        	</mediaobject>
 	        	<para>
@@ -457,7 +457,7 @@
 				<mediaobject>
 	          		<imageobject>
 	           			<imagedata align="center"
-	                       	fileref="../image/mipsample/mipuisample/onload.png" />
+	                       	fileref="../image/mip-query/mipuisample/onload.png" />
 	          		</imageobject>
 	        	</mediaobject>
 	        	<para></para>
@@ -476,14 +476,14 @@ function frmFORM_EXAMPLE_OnLoadCompleted(obj) {
         	<listitem>
         		<para>
         			Click the Design tab again and open the form edit page. 
-        			Click the Grid icon (<imageobject><imagedata align="center" fileref="../image/mipsample/mipuisample/icon_grid.png" />
+        			Click the Grid icon (<imageobject><imagedata align="center" fileref="../image/mip-query/mipuisample/icon_grid.png" />
 	          		</imageobject>) on Components Tool Bar. 
 	          		Create a Grid with the right size by dragging onto form.
         		</para>
         		<mediaobject>
 	          		<imageobject>
 	           			<imagedata align="center"
-	                       	fileref="../image/mipsample/mipuisample/drawing.png" />
+	                       	fileref="../image/mip-query/mipuisample/drawing.png" />
 	          		</imageobject>
 	        	</mediaobject>
 	        	<para></para>
@@ -491,26 +491,26 @@ function frmFORM_EXAMPLE_OnLoadCompleted(obj) {
         	<listitem>
         		<para>
         			On the left Project Explorer, select ‘dsGrdCommunity’ from the Datasets under FORM_EXAMPLE and drag onto the Grid created above. 
-        			Then, click the see property icon (<imageobject><imagedata align="center" fileref="../image/mipsample/mipuisample/icon_prop.png" />
+        			Then, click the see property icon (<imageobject><imagedata align="center" fileref="../image/mip-query/mipuisample/icon_prop.png" />
 	          		</imageobject> ) in Properties on the right and change the AutoFit property to True.
         		</para>
         		<mediaobject>
 	          		<imageobject>
 	           			<imagedata align="center"
-	                       	fileref="../image/mipsample/mipuisample/autofit.png" />
+	                       	fileref="../image/mip-query/mipuisample/autofit.png" />
 	          		</imageobject>
 	        	</mediaobject>
 	        	<para></para>
         	</listitem>
         	<listitem>
         		<para>
-        			If you click the ‘Quick View’ icon (<imageobject><imagedata align="center" fileref="../image/mipsample/mipuisample/icon_quick.png" />
+        			If you click the ‘Quick View’ icon (<imageobject><imagedata align="center" fileref="../image/mip-query/mipuisample/icon_quick.png" />
 	          		</imageobject>) on the above Tool Bar, you can see the community list being rendered.
         		</para>
         		<mediaobject>
 	          		<imageobject>
 	           			<imagedata align="center"
-	                       	fileref="../image/mipsample/mipuisample/frm_form.png" />
+	                       	fileref="../image/mip-query/mipuisample/frm_form.png" />
 	          		</imageobject>
 	        	</mediaobject>
         	</listitem>

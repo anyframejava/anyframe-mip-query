@@ -52,7 +52,7 @@
 	<itemizedlist>
       	<listitem>
       		<para>
-      			<emphasis role="bold">Controller</emphasis> – MiPController : AnyframeMiPController의 operate()를 확장한 클래스로 사용자 요청에 따라 비즈니스 서비스의 메소드를 호출하고 결과값을 화면으로 전달한다.
+      			<emphasis role="bold">Controller</emphasis> – MiPController : AbstractMiPController의 operate()를 확장한 클래스로 사용자 요청에 따라 비즈니스 서비스의 메소드를 호출하고 결과값을 화면으로 전달한다.
       		</para>
       	</listitem>
       	<listitem>
