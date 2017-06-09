@@ -2,14 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
-
+							
 	<bean name="mipService" class="org.anyframe.mip.query.service.impl.MiPServiceImpl">
-		<constructor-arg ref="mipDao" />
+		<constructor-arg index="0" ref="mipDao" />
 	</bean>
 
-	<bean name="mipDao" class="org.anyframe.mip.query.service.impl.MiPDao">
-		<constructor-arg ref="mipQueryService" />
-	</bean>				
+	<bean name="mipDao" class="org.anyframe.mip.query.dao.impl.MiPDaoQuery">
+		<constructor-arg index="0" ref="mipQueryService" />
+	</bean>						
 
 	<bean id="mipQueryService" class="org.anyframe.mip.query.impl.MiPQueryServiceImpl">
 		<property name="namedParamJdbcTemplate" ref="pagingNamedParamJdbcTemplate"/>

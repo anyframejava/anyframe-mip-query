@@ -18,6 +18,7 @@ package org.anyframe.mip.query.impl;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 
 import org.anyframe.mip.query.MiPActionCommand;
@@ -38,6 +39,7 @@ import org.anyframe.query.ria.RiaRowCallback;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationContextAware;
 
 import com.tobesoft.platform.data.Dataset;
 import com.tobesoft.platform.data.DatasetList;
@@ -47,7 +49,7 @@ import com.tobesoft.platform.data.VariableList;
  * @author Soyon Lim
  */
 public class MiPQueryServiceImpl extends AbstractRiaQueryService implements MiPQueryService,
-        InitializingBean {
+        ApplicationContextAware, InitializingBean {
 
 	public RiaRowCallback getRowCallbackHandler() {
 		return null;
@@ -166,7 +168,7 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements MiPQ
     		pageSize = dataSet.getConstColumn("pageSize").getInteger().intValue();
     	}catch(Exception e){
     		if( e instanceof NullPointerException) {
-    			throw new QueryServiceException("Query Service : there is no parameter for paging, \"pageIndex\" or \"pageSize\" must be null.");
+    			throw new QueryServiceException(messageSource, "error.riaquery.get.page.info");
 			}
     	}
 		
@@ -355,11 +357,11 @@ public class MiPQueryServiceImpl extends AbstractRiaQueryService implements MiPQ
     		Log LOGGER = LogFactory.getLog(MiPQueryService.class);
     		if( e instanceof NullPointerException ){
     			if(LOGGER.isDebugEnabled()){
-    				LOGGER.debug("Query Service : cannot find '" + columnName +" ' column in Data.");
+    				LOGGER.debug(messageSource.getMessage("error.riaquery.get.value.null", new Object[] {columnName}, Locale.getDefault()));
     			}
     		}else{
     			if(LOGGER.isDebugEnabled()){
-    				LOGGER.debug( e.getMessage() );
+    				LOGGER.debug(messageSource.getMessage("error.riaquery.get.value", new Object[] {e.getMessage() }, Locale.getDefault()));
     			}
     		}
     	}

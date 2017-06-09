@@ -53,9 +53,9 @@ public class MiPController extends AbstractMiPController {
 			DatasetList inDl, VariableList outVl, DatasetList outDl)
 			throws Exception {
 
-		String serviceName = inVl.getValueAsString("service");
+		String ServiceName = inVl.getValueAsString("service");
 		
-		Object bean = getWebApplicationContext().getBean(serviceName);
+		Object bean = getWebApplicationContext().getBean(ServiceName);
 
 		Method method = getMethod(bean,inVl.getValueAsString("method"));
 		

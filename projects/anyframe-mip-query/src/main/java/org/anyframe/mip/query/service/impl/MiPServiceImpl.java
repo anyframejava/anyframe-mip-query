@@ -18,6 +18,7 @@ package org.anyframe.mip.query.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.anyframe.mip.query.dao.MiPDao;
 import org.anyframe.mip.query.impl.MiPQueryServiceImpl;
 import org.anyframe.mip.query.service.MiPService;
 
@@ -30,7 +31,7 @@ import com.tobesoft.platform.data.VariableList;
  * @author Jonghoon, Kim
  * 
  */
-public class MiPServiceImpl implements MiPService {
+public class MiPServiceImpl implements MiPService{
 
 	protected MiPDao mipDao;
 
@@ -43,7 +44,6 @@ public class MiPServiceImpl implements MiPService {
 
 	public void get(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception {
-
 		getList(inVl, inDl, outVl, outDl);
 	}
 
@@ -119,28 +119,26 @@ public class MiPServiceImpl implements MiPService {
 
 	public void create(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception {
-
 		String status = MiPQueryServiceImpl.QUERY_INSERT;
 		save(inVl, inDl, outVl, outDl, status);
+
 	}
 
 	public void remove(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception {
-
 		String status = MiPQueryServiceImpl.QUERY_DELETE;
 		save(inVl, inDl, outVl, outDl, status);
 	}
 
 	public void update(VariableList inVl, DatasetList inDl, VariableList outVl,
 			DatasetList outDl) throws Exception {
-
 		String status = MiPQueryServiceImpl.QUERY_UPDATE;
 		save(inVl, inDl, outVl, outDl, status);
 	}
-
-	public void execute(VariableList inVl, DatasetList inDl,
-			VariableList outVl, DatasetList outDl) throws Exception {
-
+	
+	public void execute(VariableList inVl, DatasetList inDl, VariableList outVl,
+			DatasetList outDl) throws Exception {
+		
 		int querySetCount = getQuerySetCount(inVl, outVl);
 
 		String queryId = null;
@@ -152,10 +150,10 @@ public class MiPServiceImpl implements MiPService {
 			inDs = inDl.get("querySet" + i);
 			if (inDs != null) {
 				resultDl = mipDao.execute(queryId, inDs);
-				for (int j = 0; j < resultDl.size(); j++) {
+				for( int j = 0 ; j < resultDl.size() ; j ++ ){
 					outDl.add(resultDl.get(queryId + i));
 				}
-			}
+			} 
 		}
 	}
 
