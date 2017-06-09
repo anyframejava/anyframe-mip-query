@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<anyframe>
+	<pjtname>anyframe-mip-query-pi</pjtname>
+	<package>org.anyframe.plugin</package>
+	<pjthome>\Users\user\workspace\anyframe-mip-query-pi</pjthome>
+	
+	<path>
+		<template>\Users\user\workspace\anyframe-mip-query-pi\.settings\anyframe\templates</template>
+		<jdbcdrivers>\Users\user\workspace\anyframe-mip-query-pi\.settings\anyframe</jdbcdrivers>
+		<databases>\Users\user\workspace\anyframe-mip-query-pi\.settings\anyframe</databases>
+	</path>
+</anyframe>
