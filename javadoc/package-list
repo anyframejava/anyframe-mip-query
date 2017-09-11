@@ -1,0 +1,9 @@
+org.anyframe.mip.query
+org.anyframe.mip.query.impl
+org.anyframe.mip.query.impl.jdbc.mapper
+org.anyframe.mip.query.impl.jdbc.setter
+org.anyframe.mip.query.service
+org.anyframe.mip.query.service.impl
+org.anyframe.mip.query.util
+org.anyframe.mip.query.web
+org.anyframe.mip.query.web.controller
